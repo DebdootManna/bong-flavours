@@ -4,7 +4,7 @@
 
 # === REQUIRED FOR MONGODB ===
 
-MONGODB_URI=mongodb+srv://debdootmanna:MongoDB123@cluster0.8mfaf.mongodb.net/bong-flavours?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://bong-admin:mMxZzg9sz5IKtJ48@bongflavours.qdwz3g8.mongodb.net/?retryWrites=true&w=majority&appName=bongflavours
 
 # === REQUIRED FOR AUTHENTICATION ===
 
