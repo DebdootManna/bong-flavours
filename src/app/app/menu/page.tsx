@@ -65,7 +65,9 @@ const MenuPage = () => {
   }
 
   useEffect(() => {
+    // Only redirect if we're sure about the auth state (not loading) and user is not authenticated
     if (!loading && !user) {
+      console.log('Redirecting to login - user not authenticated')
       router.push('/login')
       return
     }

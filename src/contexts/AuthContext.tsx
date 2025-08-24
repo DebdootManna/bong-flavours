@@ -12,7 +12,7 @@ interface User {
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<User>
   logout: () => void
   signup: (name: string, email: string, phone: string, password: string) => Promise<void>
 }
@@ -30,13 +30,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
+      // First check localStorage for immediate user state
+      const storedUser = localStorage.getItem('user')
+      if (storedUser) {
+        console.log('Found user in localStorage:', JSON.parse(storedUser))
+        setUser(JSON.parse(storedUser))
+      }
+      
+      // Then verify with server
       const response = await fetch('/api/auth/me')
       if (response.ok) {
         const userData = await response.json()
+        console.log('Server auth verification successful:', userData.user)
         setUser(userData.user)
+        localStorage.setItem('user', JSON.stringify(userData.user))
+      } else {
+        console.log('Server auth verification failed, clearing localStorage')
+        // Clear localStorage if server auth fails
+        localStorage.removeItem('user')
+        setUser(null)
       }
     } catch (error) {
       console.error('Auth check failed:', error)
+      // Clear localStorage on error
+      localStorage.removeItem('user')
+      setUser(null)
     } finally {
       setLoading(false)
     }
@@ -58,6 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const data = await response.json()
     setUser(data.user)
+    // Also store in localStorage for persistence
+    localStorage.setItem('user', JSON.stringify(data.user))
+    return data.user
   }
 
   const signup = async (name: string, email: string, phone: string, password: string) => {
@@ -76,6 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const data = await response.json()
     setUser(data.user)
+    // Also store in localStorage for persistence
+    localStorage.setItem('user', JSON.stringify(data.user))
   }
 
   const logout = async () => {
@@ -85,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Logout error:', error)
     } finally {
       setUser(null)
+      localStorage.removeItem('user') // Clear localStorage
       window.location.href = '/'
     }
   }

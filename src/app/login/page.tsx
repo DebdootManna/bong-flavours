@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,31 +19,16 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store user info in localStorage
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        // Redirect based on user role
-        if (data.user.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/menu');
-        }
+      const user = await login(email, password);
+      
+      // Redirect based on user role
+      if (user.role === 'admin') {
+        router.push('/admin');
       } else {
-        setError(data.error || 'Login failed');
+        router.push('/app/menu');
       }
-    } catch {
-      setError('Network error. Please try again.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -54,29 +41,16 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: demoEmail, password: demoPassword }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        if (data.user.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/menu');
-        }
+      const user = await login(demoEmail, demoPassword);
+      
+      // Redirect based on user role
+      if (user.role === 'admin') {
+        router.push('/admin');
       } else {
-        setError(data.error || 'Demo login failed');
+        router.push('/app/menu');
       }
-    } catch {
-      setError('Network error. Please try again.');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Demo login failed');
     } finally {
       setLoading(false);
     }
