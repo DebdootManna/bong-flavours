@@ -1,4 +1,6 @@
-import puppeteer from 'puppeteer'
+// import puppeteer from 'puppeteer'
+// Puppeteer temporarily disabled for faster deployment
+// TODO: Re-enable for invoice generation feature
 
 interface InvoiceData {
   orderId: string
@@ -18,6 +20,9 @@ interface InvoiceData {
   paymentMethod: string
 }
 
+// Temporarily disabled for faster deployment
+// TODO: Re-enable for invoice functionality
+/*
 function generateInvoiceHTML(data: InvoiceData): string {
   const itemsHTML = data.items.map(item => `
     <tr>
@@ -220,8 +225,15 @@ function generateInvoiceHTML(data: InvoiceData): string {
     </html>
   `
 }
+*/
 
-export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function generateInvoicePDF(_data: InvoiceData): Promise<Buffer> {
+  // Temporarily disabled for faster deployment
+  // TODO: Re-enable puppeteer functionality
+  throw new Error('PDF generation temporarily disabled')
+  
+  /*
   const html = generateInvoiceHTML(data)
   
   const browser = await puppeteer.launch({
@@ -248,6 +260,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
   } finally {
     await browser.close()
   }
+  */
 }
 
 export function calculateOrderTotals(items: Array<{ price: number; quantity: number }>) {

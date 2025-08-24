@@ -1,162 +1,1058 @@
 [
-  {"category": "Shorbot", "name": "Kalboishakhi", "price": 100, "veg": true},
-  {"category": "Shorbot", "name": "Aam Panna", "price": 150, "veg": true},
-  {"category": "Shorbot", "name": "Doi er ghol (dahi ka sharbat)", "price": 80, "veg": true},
-  {"category": "Shorbot", "name": "Tumi je amar", "price": 100, "veg": true},
-  {"category": "Shorbot", "name": "Cold drinks", "variants": [{"name": "small", "price": 20}, {"name": "big", "price": 40}], "veg": true},
-  
-  {"category": "Starters", "name": "Veg. chop (2pcs)", "price": 80, "veg": true},
-  {"category": "Starters", "name": "Beguni (2pcs)", "price": 50, "veg": true},
-  {"category": "Starters", "name": "Paneer pakoda (6pcs)", "price": 210, "veg": true},
-  {"category": "Starters", "name": "Paneer chilly dry (6pcs)", "price": 260, "veg": true},
-  {"category": "Starters", "name": "Honey chilly potato", "price": 170, "veg": true},
-  {"category": "Starters", "name": "Mashroom chilly dry", "price": 210, "veg": true},
-  {"category": "Starters", "name": "Baby corn chilly", "price": 180, "veg": true},
-  
-  {"category": "Starters", "name": "Egg Devil (2pcs)", "price": 90, "veg": false},
-  {"category": "Starters", "name": "Boiled egg (2pcs)", "price": 25, "veg": false},
-  {"category": "Starters", "name": "Egg Omlette (2pcs)", "price": 50, "veg": false},
-  {"category": "Starters", "name": "Chicken Pakora (6pcs)", "price": 190, "veg": false},
-  {"category": "Starters", "name": "Chicken Cutlet (1 pc)", "price": 110, "veg": false},
-  {"category": "Starters", "name": "Chicken Kobiraji", "price": 199, "veg": false},
-  {"category": "Starters", "name": "Chicken Lolipop (4pcs)", "price": 280, "veg": false},
-  {"category": "Starters", "name": "Chicken 65 dry", "price": 310, "veg": false},
-  {"category": "Starters", "name": "Chicken leg fry (2pcs)", "price": 250, "veg": false},
-  {"category": "Starters", "name": "Chilly Chicken dry (8pcs)", "price": 290, "veg": false},
-  {"category": "Starters", "name": "Garlic chicken dry (8pcs)", "price": 320, "veg": false},
-  {"category": "Starters", "name": "Boneless chicken tawa fry", "price": 320, "veg": false},
-  
-  {"category": "Starters", "name": "Fish Cutlet (1 pcs)", "price": 110, "veg": false},
-  {"category": "Starters", "name": "Fish Kobiraji", "price": 210, "veg": false},
-  {"category": "Starters", "name": "Fish Finger (6pcs)", "price": 190, "veg": false},
-  {"category": "Starters", "name": "Fish Pakora (6pcs)", "price": 220, "veg": false},
-  {"category": "Starters", "name": "Fish Chilly dry (6pcs)", "price": 290, "veg": false},
-  {"category": "Starters", "name": "Prawn chilly dry", "price": 360, "veg": false},
-  {"category": "Starters", "name": "Parwn garlic dry", "price": 380, "veg": false},
-  {"category": "Starters", "name": "Parwn golden fry (6pcs)", "price": 450, "veg": false},
-  {"category": "Starters", "name": "Pomfret masala fry", "price": 399, "veg": false},
-  
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Veg.Kathi roll", "price": 110, "veg": true},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Paneer Kathi roll", "price": 140, "veg": true},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Egg kathi roll", "price": 99, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Chicken kathi roll", "price": 140, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Egg Chicken kathi roll", "price": 170, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "mutton kathi roll", "price": 180, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Egg mutton kathi roll", "price": 190, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Egg moghlai paratha", "price": 150, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Egg chicken moghlai paratha", "price": 180, "veg": false},
-  {"category": "Kolkata Kathi Roll & Mughlai Paratha", "name": "Egg mutton moghlai paratha", "price": 210, "veg": false},
-  
-  {"category": "Kolkata Biryani", "name": "kolakata style Egg dum biryani (2 aloo+ 2 egg)", "price": 220, "veg": false},
-  {"category": "Kolkata Biryani", "name": "kolakata style Egg dum biryani", "price": 250, "veg": false},
-  {"category": "Kolkata Biryani", "name": "kolakata style Chicken dum biryani (1 aloo+ 1 egg + 1 chicken)", "price": 280, "veg": false},
-  {"category": "Kolkata Biryani", "name": "Special kolakata style chicken dum biryani (2 aloo+ 2 egg + 2 chicken) (serve with rayta)", "price": 610, "veg": false},
-  {"category": "Kolkata Biryani", "name": "kolakata style Mutton dum biryani (1 aloo+ 1 egg + 1 mutton)", "price": 400, "veg": false},
-  {"category": "Kolkata Biryani", "name": "Special kolakata style Mutton dum biryani (2 aloo+ 2 egg + 2 mutton) (serve with rayta)", "price": 820, "veg": false},
-  {"category": "Kolkata Biryani", "name": "Add extra aloo", "price": 20, "veg": true},
-  {"category": "Kolkata Biryani", "name": "Add extra egg", "price": 10, "veg": false},
-  {"category": "Kolkata Biryani", "name": "Add extra chicken", "price": 100, "veg": false},
-  {"category": "Kolkata Biryani", "name": "Add extra mutton", "price": 200, "veg": false},
-  
-  {"category": "Kolkata Chinese", "name": "veg. Hakka noodles", "variants": [{"name": "plain", "price": 200}, {"name": "shezwan", "price": 220}], "veg": true},
-  {"category": "Kolkata Chinese", "name": "veg. Fried rice", "variants": [{"name": "plain", "price": 200}, {"name": "shezwany", "price": 220}], "veg": true},
-  {"category": "Kolkata Chinese", "name": "Paneer Chilly gravy (6pcs)", "price": 290, "veg": true},
-  {"category": "Kolkata Chinese", "name": "mashroom Chilly gravy (6pcs)", "price": 310, "veg": true},
-  
-  {"category": "Kolkata Chinese", "name": "Chilly chicken gravy (8pcs)", "price": 310, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Garlic chicken gravy (8pcs)", "price": 320, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Fish chilly gravy", "price": 330, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Garlic fish gravy", "price": 340, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Prawn chilly gravy", "price": 380, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Garlic prawn gravy", "price": 390, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Egg Hakka noodles", "price": 200, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Chicken Hakka noodles", "price": 220, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Egg Chicken Hakka noodles", "price": 230, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Mixed noodles (with prawns)", "price": 220, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Egg Shezwan noodles", "price": 199, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Chicken Shezwan noodles", "price": 220, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Egg Chicken Shezwan noodles", "price": 220, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Mixed Shezwan noodles (with prawns)", "price": 240, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Egg fried rice", "price": 200, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Chicken fried rice", "price": 220, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Egg chicken fried rice", "price": 230, "veg": false},
-  {"category": "Kolkata Chinese", "name": "Mixed fried rice (with prawns)", "price": 240, "veg": false},
-  
-  {"category": "Main Course", "name": "Jhuri aloo bhaja", "price": 80, "veg": true},
-  {"category": "Main Course", "name": "Begun bhaja", "price": 50, "veg": true},
-  {"category": "Main Course", "name": "Home style plain daal", "price": 130, "veg": true},
-  {"category": "Main Course", "name": "Daal fry", "price": 150, "veg": true},
-  {"category": "Main Course", "name": "Chollar/chana daal with coconut", "price": 180, "veg": true},
-  {"category": "Main Course", "name": "Home style aloo sabjhi", "price": 100, "veg": true},
-  {"category": "Main Course", "name": "Aloo dum", "price": 180, "veg": true},
-  {"category": "Main Course", "name": "Dhokar dalna", "price": 220, "veg": true},
-  {"category": "Main Course", "name": "Aloo posto", "price": 270, "veg": true},
-  {"category": "Main Course", "name": "Seasonal veg (as per availability)", "price": 190, "veg": true},
-  {"category": "Main Course", "name": "Paneer masala", "price": 270, "veg": true},
-  {"category": "Main Course", "name": "Paneer butter masala", "price": 280, "veg": true},
-  {"category": "Main Course", "name": "Paneer do pyaaza", "price": 290, "veg": true},
-  {"category": "Main Course", "name": "Khadai paneer", "price": 299, "veg": true},
-  
-  {"category": "Main Course", "name": "Mach bhaja (2pcs)", "price": 250, "veg": false},
-  {"category": "Main Course", "name": "Fish paturi (boneless fish cook inside banana leaf)", "price": 260, "veg": false},
-  {"category": "Main Course", "name": "Fish curry (2pcs)", "price": 270, "veg": false},
-  {"category": "Main Course", "name": "Macher jhol with vegetables", "price": 330, "veg": false},
-  {"category": "Main Course", "name": "Fish kalia (2pcs)", "price": 340, "veg": false},
-  {"category": "Main Course", "name": "Fish in mustard gravy (2pcs)", "price": 360, "veg": false},
-  {"category": "Main Course", "name": "Doi mach (2pcs)", "price": 380, "veg": false},
-  {"category": "Main Course", "name": "Katla posto (2pcs)", "price": 410, "veg": false},
-  {"category": "Main Course", "name": "Prawn masala", "price": 410, "veg": false},
-  {"category": "Main Course", "name": "Prawn malai curry", "price": 420, "veg": false},
-  {"category": "Main Course", "name": "Daab chingri", "price": 450, "veg": false},
-  {"category": "Main Course", "name": "Pomfret masala gravy", "price": 420, "veg": false},
-  {"category": "Main Course", "name": "Pomfret in mustard gravy", "price": 430, "veg": false},
-  {"category": "Main Course", "name": "Pabda macher jhol", "price": 310, "veg": false},
-  {"category": "Main Course", "name": "Pabda in mustasrd gravy", "price": 320, "veg": false},
-  {"category": "Main Course", "name": "Boneless fish masala", "price": 360, "veg": false},
-  {"category": "Main Course", "name": "Boneless fish curry", "price": 370, "veg": false},
-  {"category": "Main Course", "name": "Boneless fish mustard", "price": 380, "veg": false},
-  
-  {"category": "Main Course", "name": "Chicken kosha (4pcs)", "price": 330, "veg": false},
-  {"category": "Main Course", "name": "Chicken curry (4pcs)", "price": 310, "veg": false},
-  {"category": "Main Course", "name": "Chicken curry potato (4pcs)", "price": 340, "veg": false},
-  {"category": "Main Course", "name": "Chicken masala (4pcs)", "price": 360, "veg": false},
-  {"category": "Main Course", "name": "Chicken chaap (2pcs)", "price": 380, "veg": false},
-  {"category": "Main Course", "name": "Kadhi chicken (4pcs)", "price": 350, "veg": false},
-  {"category": "Main Course", "name": "Chicken do pyaza (4pcs)", "price": 350, "veg": false},
-  {"category": "Main Course", "name": "Mutton kosha (4pcs)", "price": 480, "veg": false},
-  {"category": "Main Course", "name": "Mutton curry (4pcs)", "price": 490, "veg": false},
-  {"category": "Main Course", "name": "Mutton curry with potato (4+2pcs)", "price": 510, "veg": false},
-  {"category": "Main Course", "name": "Egg kosha (2pcs)", "price": 210, "veg": false},
-  {"category": "Main Course", "name": "Egg curry (2pcs)", "price": 220, "veg": false},
-  {"category": "Main Course", "name": "Egg do pyaza (2pcs)", "price": 230, "veg": false},
-  
-  {"category": "Rice", "name": "Steamed rice", "price": 120, "veg": true},
-  {"category": "Rice", "name": "Ghee Bhat", "price": 150, "veg": true},
-  {"category": "Rice", "name": "Jeera rice", "price": 150, "veg": true},
-  {"category": "Rice", "name": "Veg. Pulao", "price": 210, "veg": true},
-  {"category": "Rice", "name": "Khichri", "price": 200, "veg": true},
-  {"category": "Rice", "name": "Kajukismis Pulao", "price": 210, "veg": true},
-  
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "Tava roti", "price": 15, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "Tava butter roti", "price": 20, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "Plain paratha", "price": 40, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "Laccha paratha", "price": 50, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "Sattu paratha", "price": 50, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "4 Luchi/poori", "price": 60, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "2 Radhaballavi", "price": 45, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "2 Hing kochuri", "price": 45, "veg": true},
-  {"category": "Roti/Paratha/Loochi (Puri)", "name": "2 Peas kochuri", "price": 50, "veg": true},
-  
-  {"category": "Accompaniments & Desserts", "name": "Papad (roasted)", "price": 10, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Papad (fried)", "price": 20, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Masala Papad", "price": 40, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Egg. Masala Papad", "price": 60, "veg": false},
-  {"category": "Accompaniments & Desserts", "name": "Green salad", "price": 60, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Sweet Tomato chutney", "price": 60, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Raw Mango chutney", "price": 60, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Rosogolla (2pcs)", "price": 50, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Payesh/Kheer", "price": 80, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "Kolkata Mishti Doi", "price": 85, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "sweet boondi", "price": 80, "veg": true},
-  {"category": "Accompaniments & Desserts", "name": "kolkata sweet (as per avaiblity)", "price": 0, "veg": true}
+  {
+    "id": "item_1",
+    "category": "Shorbot",
+    "name": "Kalboishakhi",
+    "price": 100,
+    "veg": true
+  },
+  {
+    "id": "item_2",
+    "category": "Shorbot",
+    "name": "Aam Panna",
+    "price": 150,
+    "veg": true
+  },
+  {
+    "id": "item_3",
+    "category": "Shorbot",
+    "name": "Doi er ghol (dahi ka sharbat)",
+    "price": 80,
+    "veg": true
+  },
+  {
+    "id": "item_4",
+    "category": "Shorbot",
+    "name": "Tumi je amar",
+    "price": 100,
+    "veg": true
+  },
+  {
+    "id": "item_5",
+    "category": "Shorbot",
+    "name": "Cold drinks",
+    "variants": [
+      {
+        "name": "small",
+        "price": 20
+      },
+      {
+        "name": "big",
+        "price": 40
+      }
+    ],
+    "veg": true
+  },
+  {
+    "id": "item_6",
+    "category": "Starters",
+    "name": "Veg. chop (2pcs)",
+    "price": 80,
+    "veg": true
+  },
+  {
+    "id": "item_7",
+    "category": "Starters",
+    "name": "Beguni (2pcs)",
+    "price": 50,
+    "veg": true
+  },
+  {
+    "id": "item_8",
+    "category": "Starters",
+    "name": "Paneer pakoda (6pcs)",
+    "price": 210,
+    "veg": true
+  },
+  {
+    "id": "item_9",
+    "category": "Starters",
+    "name": "Paneer chilly dry (6pcs)",
+    "price": 260,
+    "veg": true
+  },
+  {
+    "id": "item_10",
+    "category": "Starters",
+    "name": "Honey chilly potato",
+    "price": 170,
+    "veg": true
+  },
+  {
+    "id": "item_11",
+    "category": "Starters",
+    "name": "Mashroom chilly dry",
+    "price": 210,
+    "veg": true
+  },
+  {
+    "id": "item_12",
+    "category": "Starters",
+    "name": "Baby corn chilly",
+    "price": 180,
+    "veg": true
+  },
+  {
+    "id": "item_13",
+    "category": "Starters",
+    "name": "Egg Devil (2pcs)",
+    "price": 90,
+    "veg": false
+  },
+  {
+    "id": "item_14",
+    "category": "Starters",
+    "name": "Boiled egg (2pcs)",
+    "price": 25,
+    "veg": false
+  },
+  {
+    "id": "item_15",
+    "category": "Starters",
+    "name": "Egg Omlette (2pcs)",
+    "price": 50,
+    "veg": false
+  },
+  {
+    "id": "item_16",
+    "category": "Starters",
+    "name": "Chicken Pakora (6pcs)",
+    "price": 190,
+    "veg": false
+  },
+  {
+    "id": "item_17",
+    "category": "Starters",
+    "name": "Chicken Cutlet (1 pc)",
+    "price": 110,
+    "veg": false
+  },
+  {
+    "id": "item_18",
+    "category": "Starters",
+    "name": "Chicken Kobiraji",
+    "price": 199,
+    "veg": false
+  },
+  {
+    "id": "item_19",
+    "category": "Starters",
+    "name": "Chicken Lolipop (4pcs)",
+    "price": 280,
+    "veg": false
+  },
+  {
+    "id": "item_20",
+    "category": "Starters",
+    "name": "Chicken 65 dry",
+    "price": 310,
+    "veg": false
+  },
+  {
+    "id": "item_21",
+    "category": "Starters",
+    "name": "Chicken leg fry (2pcs)",
+    "price": 250,
+    "veg": false
+  },
+  {
+    "id": "item_22",
+    "category": "Starters",
+    "name": "Chilly Chicken dry (8pcs)",
+    "price": 290,
+    "veg": false
+  },
+  {
+    "id": "item_23",
+    "category": "Starters",
+    "name": "Garlic chicken dry (8pcs)",
+    "price": 320,
+    "veg": false
+  },
+  {
+    "id": "item_24",
+    "category": "Starters",
+    "name": "Boneless chicken tawa fry",
+    "price": 320,
+    "veg": false
+  },
+  {
+    "id": "item_25",
+    "category": "Starters",
+    "name": "Fish Cutlet (1 pcs)",
+    "price": 110,
+    "veg": false
+  },
+  {
+    "id": "item_26",
+    "category": "Starters",
+    "name": "Fish Kobiraji",
+    "price": 210,
+    "veg": false
+  },
+  {
+    "id": "item_27",
+    "category": "Starters",
+    "name": "Fish Finger (6pcs)",
+    "price": 190,
+    "veg": false
+  },
+  {
+    "id": "item_28",
+    "category": "Starters",
+    "name": "Fish Pakora (6pcs)",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_29",
+    "category": "Starters",
+    "name": "Fish Chilly dry (6pcs)",
+    "price": 290,
+    "veg": false
+  },
+  {
+    "id": "item_30",
+    "category": "Starters",
+    "name": "Prawn chilly dry",
+    "price": 360,
+    "veg": false
+  },
+  {
+    "id": "item_31",
+    "category": "Starters",
+    "name": "Parwn garlic dry",
+    "price": 380,
+    "veg": false
+  },
+  {
+    "id": "item_32",
+    "category": "Starters",
+    "name": "Parwn golden fry (6pcs)",
+    "price": 450,
+    "veg": false
+  },
+  {
+    "id": "item_33",
+    "category": "Starters",
+    "name": "Pomfret masala fry",
+    "price": 399,
+    "veg": false
+  },
+  {
+    "id": "item_34",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Veg.Kathi roll",
+    "price": 110,
+    "veg": true
+  },
+  {
+    "id": "item_35",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Paneer Kathi roll",
+    "price": 140,
+    "veg": true
+  },
+  {
+    "id": "item_36",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Egg kathi roll",
+    "price": 99,
+    "veg": false
+  },
+  {
+    "id": "item_37",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Chicken kathi roll",
+    "price": 140,
+    "veg": false
+  },
+  {
+    "id": "item_38",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Egg Chicken kathi roll",
+    "price": 170,
+    "veg": false
+  },
+  {
+    "id": "item_39",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "mutton kathi roll",
+    "price": 180,
+    "veg": false
+  },
+  {
+    "id": "item_40",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Egg mutton kathi roll",
+    "price": 190,
+    "veg": false
+  },
+  {
+    "id": "item_41",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Egg moghlai paratha",
+    "price": 150,
+    "veg": false
+  },
+  {
+    "id": "item_42",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Egg chicken moghlai paratha",
+    "price": 180,
+    "veg": false
+  },
+  {
+    "id": "item_43",
+    "category": "Kolkata Kathi Roll & Mughlai Paratha",
+    "name": "Egg mutton moghlai paratha",
+    "price": 210,
+    "veg": false
+  },
+  {
+    "id": "item_44",
+    "category": "Kolkata Biryani",
+    "name": "kolakata style Egg dum biryani (2 aloo+ 2 egg)",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_45",
+    "category": "Kolkata Biryani",
+    "name": "kolakata style Egg dum biryani",
+    "price": 250,
+    "veg": false
+  },
+  {
+    "id": "item_46",
+    "category": "Kolkata Biryani",
+    "name": "kolakata style Chicken dum biryani (1 aloo+ 1 egg + 1 chicken)",
+    "price": 280,
+    "veg": false
+  },
+  {
+    "id": "item_47",
+    "category": "Kolkata Biryani",
+    "name": "Special kolakata style chicken dum biryani (2 aloo+ 2 egg + 2 chicken) (serve with rayta)",
+    "price": 610,
+    "veg": false
+  },
+  {
+    "id": "item_48",
+    "category": "Kolkata Biryani",
+    "name": "kolakata style Mutton dum biryani (1 aloo+ 1 egg + 1 mutton)",
+    "price": 400,
+    "veg": false
+  },
+  {
+    "id": "item_49",
+    "category": "Kolkata Biryani",
+    "name": "Special kolakata style Mutton dum biryani (2 aloo+ 2 egg + 2 mutton) (serve with rayta)",
+    "price": 820,
+    "veg": false
+  },
+  {
+    "id": "item_50",
+    "category": "Kolkata Biryani",
+    "name": "Add extra aloo",
+    "price": 20,
+    "veg": true
+  },
+  {
+    "id": "item_51",
+    "category": "Kolkata Biryani",
+    "name": "Add extra egg",
+    "price": 10,
+    "veg": false
+  },
+  {
+    "id": "item_52",
+    "category": "Kolkata Biryani",
+    "name": "Add extra chicken",
+    "price": 100,
+    "veg": false
+  },
+  {
+    "id": "item_53",
+    "category": "Kolkata Biryani",
+    "name": "Add extra mutton",
+    "price": 200,
+    "veg": false
+  },
+  {
+    "id": "item_54",
+    "category": "Kolkata Chinese",
+    "name": "veg. Hakka noodles",
+    "variants": [
+      {
+        "name": "plain",
+        "price": 200
+      },
+      {
+        "name": "shezwan",
+        "price": 220
+      }
+    ],
+    "veg": true
+  },
+  {
+    "id": "item_55",
+    "category": "Kolkata Chinese",
+    "name": "veg. Fried rice",
+    "variants": [
+      {
+        "name": "plain",
+        "price": 200
+      },
+      {
+        "name": "shezwany",
+        "price": 220
+      }
+    ],
+    "veg": true
+  },
+  {
+    "id": "item_56",
+    "category": "Kolkata Chinese",
+    "name": "Paneer Chilly gravy (6pcs)",
+    "price": 290,
+    "veg": true
+  },
+  {
+    "id": "item_57",
+    "category": "Kolkata Chinese",
+    "name": "mashroom Chilly gravy (6pcs)",
+    "price": 310,
+    "veg": true
+  },
+  {
+    "id": "item_58",
+    "category": "Kolkata Chinese",
+    "name": "Chilly chicken gravy (8pcs)",
+    "price": 310,
+    "veg": false
+  },
+  {
+    "id": "item_59",
+    "category": "Kolkata Chinese",
+    "name": "Garlic chicken gravy (8pcs)",
+    "price": 320,
+    "veg": false
+  },
+  {
+    "id": "item_60",
+    "category": "Kolkata Chinese",
+    "name": "Fish chilly gravy",
+    "price": 330,
+    "veg": false
+  },
+  {
+    "id": "item_61",
+    "category": "Kolkata Chinese",
+    "name": "Garlic fish gravy",
+    "price": 340,
+    "veg": false
+  },
+  {
+    "id": "item_62",
+    "category": "Kolkata Chinese",
+    "name": "Prawn chilly gravy",
+    "price": 380,
+    "veg": false
+  },
+  {
+    "id": "item_63",
+    "category": "Kolkata Chinese",
+    "name": "Garlic prawn gravy",
+    "price": 390,
+    "veg": false
+  },
+  {
+    "id": "item_64",
+    "category": "Kolkata Chinese",
+    "name": "Egg Hakka noodles",
+    "price": 200,
+    "veg": false
+  },
+  {
+    "id": "item_65",
+    "category": "Kolkata Chinese",
+    "name": "Chicken Hakka noodles",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_66",
+    "category": "Kolkata Chinese",
+    "name": "Egg Chicken Hakka noodles",
+    "price": 230,
+    "veg": false
+  },
+  {
+    "id": "item_67",
+    "category": "Kolkata Chinese",
+    "name": "Mixed noodles (with prawns)",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_68",
+    "category": "Kolkata Chinese",
+    "name": "Egg Shezwan noodles",
+    "price": 199,
+    "veg": false
+  },
+  {
+    "id": "item_69",
+    "category": "Kolkata Chinese",
+    "name": "Chicken Shezwan noodles",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_70",
+    "category": "Kolkata Chinese",
+    "name": "Egg Chicken Shezwan noodles",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_71",
+    "category": "Kolkata Chinese",
+    "name": "Mixed Shezwan noodles (with prawns)",
+    "price": 240,
+    "veg": false
+  },
+  {
+    "id": "item_72",
+    "category": "Kolkata Chinese",
+    "name": "Egg fried rice",
+    "price": 200,
+    "veg": false
+  },
+  {
+    "id": "item_73",
+    "category": "Kolkata Chinese",
+    "name": "Chicken fried rice",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_74",
+    "category": "Kolkata Chinese",
+    "name": "Egg chicken fried rice",
+    "price": 230,
+    "veg": false
+  },
+  {
+    "id": "item_75",
+    "category": "Kolkata Chinese",
+    "name": "Mixed fried rice (with prawns)",
+    "price": 240,
+    "veg": false
+  },
+  {
+    "id": "item_76",
+    "category": "Main Course",
+    "name": "Jhuri aloo bhaja",
+    "price": 80,
+    "veg": true
+  },
+  {
+    "id": "item_77",
+    "category": "Main Course",
+    "name": "Begun bhaja",
+    "price": 50,
+    "veg": true
+  },
+  {
+    "id": "item_78",
+    "category": "Main Course",
+    "name": "Home style plain daal",
+    "price": 130,
+    "veg": true
+  },
+  {
+    "id": "item_79",
+    "category": "Main Course",
+    "name": "Daal fry",
+    "price": 150,
+    "veg": true
+  },
+  {
+    "id": "item_80",
+    "category": "Main Course",
+    "name": "Chollar/chana daal with coconut",
+    "price": 180,
+    "veg": true
+  },
+  {
+    "id": "item_81",
+    "category": "Main Course",
+    "name": "Home style aloo sabjhi",
+    "price": 100,
+    "veg": true
+  },
+  {
+    "id": "item_82",
+    "category": "Main Course",
+    "name": "Aloo dum",
+    "price": 180,
+    "veg": true
+  },
+  {
+    "id": "item_83",
+    "category": "Main Course",
+    "name": "Dhokar dalna",
+    "price": 220,
+    "veg": true
+  },
+  {
+    "id": "item_84",
+    "category": "Main Course",
+    "name": "Aloo posto",
+    "price": 270,
+    "veg": true
+  },
+  {
+    "id": "item_85",
+    "category": "Main Course",
+    "name": "Seasonal veg (as per availability)",
+    "price": 190,
+    "veg": true
+  },
+  {
+    "id": "item_86",
+    "category": "Main Course",
+    "name": "Paneer masala",
+    "price": 270,
+    "veg": true
+  },
+  {
+    "id": "item_87",
+    "category": "Main Course",
+    "name": "Paneer butter masala",
+    "price": 280,
+    "veg": true
+  },
+  {
+    "id": "item_88",
+    "category": "Main Course",
+    "name": "Paneer do pyaaza",
+    "price": 290,
+    "veg": true
+  },
+  {
+    "id": "item_89",
+    "category": "Main Course",
+    "name": "Khadai paneer",
+    "price": 299,
+    "veg": true
+  },
+  {
+    "id": "item_90",
+    "category": "Main Course",
+    "name": "Mach bhaja (2pcs)",
+    "price": 250,
+    "veg": false
+  },
+  {
+    "id": "item_91",
+    "category": "Main Course",
+    "name": "Fish paturi (boneless fish cook inside banana leaf)",
+    "price": 260,
+    "veg": false
+  },
+  {
+    "id": "item_92",
+    "category": "Main Course",
+    "name": "Fish curry (2pcs)",
+    "price": 270,
+    "veg": false
+  },
+  {
+    "id": "item_93",
+    "category": "Main Course",
+    "name": "Macher jhol with vegetables",
+    "price": 330,
+    "veg": false
+  },
+  {
+    "id": "item_94",
+    "category": "Main Course",
+    "name": "Fish kalia (2pcs)",
+    "price": 340,
+    "veg": false
+  },
+  {
+    "id": "item_95",
+    "category": "Main Course",
+    "name": "Fish in mustard gravy (2pcs)",
+    "price": 360,
+    "veg": false
+  },
+  {
+    "id": "item_96",
+    "category": "Main Course",
+    "name": "Doi mach (2pcs)",
+    "price": 380,
+    "veg": false
+  },
+  {
+    "id": "item_97",
+    "category": "Main Course",
+    "name": "Katla posto (2pcs)",
+    "price": 410,
+    "veg": false
+  },
+  {
+    "id": "item_98",
+    "category": "Main Course",
+    "name": "Prawn masala",
+    "price": 410,
+    "veg": false
+  },
+  {
+    "id": "item_99",
+    "category": "Main Course",
+    "name": "Prawn malai curry",
+    "price": 420,
+    "veg": false
+  },
+  {
+    "id": "item_100",
+    "category": "Main Course",
+    "name": "Daab chingri",
+    "price": 450,
+    "veg": false
+  },
+  {
+    "id": "item_101",
+    "category": "Main Course",
+    "name": "Pomfret masala gravy",
+    "price": 420,
+    "veg": false
+  },
+  {
+    "id": "item_102",
+    "category": "Main Course",
+    "name": "Pomfret in mustard gravy",
+    "price": 430,
+    "veg": false
+  },
+  {
+    "id": "item_103",
+    "category": "Main Course",
+    "name": "Pabda macher jhol",
+    "price": 310,
+    "veg": false
+  },
+  {
+    "id": "item_104",
+    "category": "Main Course",
+    "name": "Pabda in mustasrd gravy",
+    "price": 320,
+    "veg": false
+  },
+  {
+    "id": "item_105",
+    "category": "Main Course",
+    "name": "Boneless fish masala",
+    "price": 360,
+    "veg": false
+  },
+  {
+    "id": "item_106",
+    "category": "Main Course",
+    "name": "Boneless fish curry",
+    "price": 370,
+    "veg": false
+  },
+  {
+    "id": "item_107",
+    "category": "Main Course",
+    "name": "Boneless fish mustard",
+    "price": 380,
+    "veg": false
+  },
+  {
+    "id": "item_108",
+    "category": "Main Course",
+    "name": "Chicken kosha (4pcs)",
+    "price": 330,
+    "veg": false
+  },
+  {
+    "id": "item_109",
+    "category": "Main Course",
+    "name": "Chicken curry (4pcs)",
+    "price": 310,
+    "veg": false
+  },
+  {
+    "id": "item_110",
+    "category": "Main Course",
+    "name": "Chicken curry potato (4pcs)",
+    "price": 340,
+    "veg": false
+  },
+  {
+    "id": "item_111",
+    "category": "Main Course",
+    "name": "Chicken masala (4pcs)",
+    "price": 360,
+    "veg": false
+  },
+  {
+    "id": "item_112",
+    "category": "Main Course",
+    "name": "Chicken chaap (2pcs)",
+    "price": 380,
+    "veg": false
+  },
+  {
+    "id": "item_113",
+    "category": "Main Course",
+    "name": "Kadhi chicken (4pcs)",
+    "price": 350,
+    "veg": false
+  },
+  {
+    "id": "item_114",
+    "category": "Main Course",
+    "name": "Chicken do pyaza (4pcs)",
+    "price": 350,
+    "veg": false
+  },
+  {
+    "id": "item_115",
+    "category": "Main Course",
+    "name": "Mutton kosha (4pcs)",
+    "price": 480,
+    "veg": false
+  },
+  {
+    "id": "item_116",
+    "category": "Main Course",
+    "name": "Mutton curry (4pcs)",
+    "price": 490,
+    "veg": false
+  },
+  {
+    "id": "item_117",
+    "category": "Main Course",
+    "name": "Mutton curry with potato (4+2pcs)",
+    "price": 510,
+    "veg": false
+  },
+  {
+    "id": "item_118",
+    "category": "Main Course",
+    "name": "Egg kosha (2pcs)",
+    "price": 210,
+    "veg": false
+  },
+  {
+    "id": "item_119",
+    "category": "Main Course",
+    "name": "Egg curry (2pcs)",
+    "price": 220,
+    "veg": false
+  },
+  {
+    "id": "item_120",
+    "category": "Main Course",
+    "name": "Egg do pyaza (2pcs)",
+    "price": 230,
+    "veg": false
+  },
+  {
+    "id": "item_121",
+    "category": "Rice",
+    "name": "Steamed rice",
+    "price": 120,
+    "veg": true
+  },
+  {
+    "id": "item_122",
+    "category": "Rice",
+    "name": "Ghee Bhat",
+    "price": 150,
+    "veg": true
+  },
+  {
+    "id": "item_123",
+    "category": "Rice",
+    "name": "Jeera rice",
+    "price": 150,
+    "veg": true
+  },
+  {
+    "id": "item_124",
+    "category": "Rice",
+    "name": "Veg. Pulao",
+    "price": 210,
+    "veg": true
+  },
+  {
+    "id": "item_125",
+    "category": "Rice",
+    "name": "Khichri",
+    "price": 200,
+    "veg": true
+  },
+  {
+    "id": "item_126",
+    "category": "Rice",
+    "name": "Kajukismis Pulao",
+    "price": 210,
+    "veg": true
+  },
+  {
+    "id": "item_127",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "Tava roti",
+    "price": 15,
+    "veg": true
+  },
+  {
+    "id": "item_128",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "Tava butter roti",
+    "price": 20,
+    "veg": true
+  },
+  {
+    "id": "item_129",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "Plain paratha",
+    "price": 40,
+    "veg": true
+  },
+  {
+    "id": "item_130",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "Laccha paratha",
+    "price": 50,
+    "veg": true
+  },
+  {
+    "id": "item_131",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "Sattu paratha",
+    "price": 50,
+    "veg": true
+  },
+  {
+    "id": "item_132",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "4 Luchi/poori",
+    "price": 60,
+    "veg": true
+  },
+  {
+    "id": "item_133",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "2 Radhaballavi",
+    "price": 45,
+    "veg": true
+  },
+  {
+    "id": "item_134",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "2 Hing kochuri",
+    "price": 45,
+    "veg": true
+  },
+  {
+    "id": "item_135",
+    "category": "Roti/Paratha/Loochi (Puri)",
+    "name": "2 Peas kochuri",
+    "price": 50,
+    "veg": true
+  },
+  {
+    "id": "item_136",
+    "category": "Accompaniments & Desserts",
+    "name": "Papad (roasted)",
+    "price": 10,
+    "veg": true
+  },
+  {
+    "id": "item_137",
+    "category": "Accompaniments & Desserts",
+    "name": "Papad (fried)",
+    "price": 20,
+    "veg": true
+  },
+  {
+    "id": "item_138",
+    "category": "Accompaniments & Desserts",
+    "name": "Masala Papad",
+    "price": 40,
+    "veg": true
+  },
+  {
+    "id": "item_139",
+    "category": "Accompaniments & Desserts",
+    "name": "Egg. Masala Papad",
+    "price": 60,
+    "veg": false
+  },
+  {
+    "id": "item_140",
+    "category": "Accompaniments & Desserts",
+    "name": "Green salad",
+    "price": 60,
+    "veg": true
+  },
+  {
+    "id": "item_141",
+    "category": "Accompaniments & Desserts",
+    "name": "Sweet Tomato chutney",
+    "price": 60,
+    "veg": true
+  },
+  {
+    "id": "item_142",
+    "category": "Accompaniments & Desserts",
+    "name": "Raw Mango chutney",
+    "price": 60,
+    "veg": true
+  },
+  {
+    "id": "item_143",
+    "category": "Accompaniments & Desserts",
+    "name": "Rosogolla (2pcs)",
+    "price": 50,
+    "veg": true
+  },
+  {
+    "id": "item_144",
+    "category": "Accompaniments & Desserts",
+    "name": "Payesh/Kheer",
+    "price": 80,
+    "veg": true
+  },
+  {
+    "id": "item_145",
+    "category": "Accompaniments & Desserts",
+    "name": "Kolkata Mishti Doi",
+    "price": 85,
+    "veg": true
+  },
+  {
+    "id": "item_146",
+    "category": "Accompaniments & Desserts",
+    "name": "sweet boondi",
+    "price": 80,
+    "veg": true
+  },
+  {
+    "id": "item_147",
+    "category": "Accompaniments & Desserts",
+    "name": "kolkata sweet (as per avaiblity)",
+    "price": 0,
+    "veg": true
+  }
 ]

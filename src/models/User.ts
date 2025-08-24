@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 })
 
-userSchema.index({ email: 1 })
+// Indexes (email index already created by unique: true)
 userSchema.index({ role: 1 })
 
 export default mongoose.models.User || mongoose.model<IUser>('User', userSchema)
