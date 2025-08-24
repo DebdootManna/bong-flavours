@@ -35,9 +35,27 @@ a {
   text-decoration: none;
 }
 
-/* Smooth scrolling enhancement */
+/* Natural, responsive scrolling */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  overflow-x: hidden;
+}
+
+body {
+  scroll-behavior: auto;
+  overflow-x: hidden;
+}
+
+/* Performance optimizations for smooth scrolling */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure no interference with native scrolling */
+html, body {
+  height: auto;
+  min-height: 100vh;
 }
 
 /* Reduced motion preferences */
