@@ -66,7 +66,7 @@ const MenuPage = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth/login')
+      router.push('/login')
       return
     }
   }, [user, loading, router])
