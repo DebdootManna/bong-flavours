@@ -31,7 +31,7 @@ export async function GET(
     await dbConnect()
 
     // Find order
-    const query: { _id: string; userId?: string } = { _id: params.id }
+    const query: { _id: string; userId?: string } = { _id: id }
     
     // If not admin, only allow access to own orders
     if (payload.role !== 'admin') {
@@ -96,7 +96,7 @@ export async function PUT(
     }
 
     const order = await Order.findByIdAndUpdate(
-      params.id,
+      id,
       updateData,
       { new: true }
     ).populate('userId', 'name email phone')
@@ -129,9 +129,10 @@ export async function PUT(
 // DELETE /api/orders/[id] - Cancel order
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     // Verify authentication
     const token = req.cookies.get('auth-token')?.value
     
@@ -144,7 +145,7 @@ export async function DELETE(
     await dbConnect()
 
     // Find order
-    const query: { _id: string; userId?: string } = { _id: params.id }
+    const query: { _id: string; userId?: string } = { _id: id }
     
     // If not admin, only allow access to own orders
     if (payload.role !== 'admin') {
