@@ -13,8 +13,8 @@ const demoUsers = [
     addresses: []
   },
   {
-    name: "Rahul Kumar",
-    email: "rahul@example.com",
+    name: "Raj Kumar",
+    email: "raj@example.com",
     password: "password123",
     phone: "9876543211",
     role: "customer",
@@ -47,8 +47,8 @@ const demoUsers = [
     ]
   },
   {
-    name: "Amit Das",
-    email: "amit@example.com",
+    name: "Rahul Kumar",
+    email: "rahul@example.com",
     password: "password123",
     phone: "9876543213",
     role: "customer",
@@ -64,10 +64,27 @@ const demoUsers = [
     ]
   },
   {
+    name: "Amit Das",
+    email: "amit@example.com",
+    password: "password123",
+    phone: "9876543214",
+    role: "customer",
+    addresses: [
+      {
+        type: "home",
+        street: "321 Ballygunge",
+        city: "Kolkata",
+        state: "West Bengal",
+        zipCode: "700019",
+        isDefault: true
+      }
+    ]
+  },
+  {
     name: "Sneha Roy",
     email: "sneha@example.com",
     password: "password123",
-    phone: "9876543214",
+    phone: "9876543215",
     role: "customer",
     addresses: [
       {
@@ -276,8 +293,9 @@ export async function POST(request: Request) {
         demoAccounts: [
           '👑 ADMIN: admin@bongflavours.com / admin123',
           '👑 ADMIN: debdootmanna007@gmail.com / password123',
-          '👤 Customer: rahul@example.com / password123',
+          '👤 Customer: raj@example.com / password123',
           '👤 Customer: priya@example.com / password123',
+          '👤 Customer: rahul@example.com / password123',
           '👤 Customer: amit@example.com / password123',
           '👤 Customer: sneha@example.com / password123'
         ]
