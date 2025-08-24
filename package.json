@@ -9,10 +9,13 @@
     "start": "next start",
     "lint": "next lint",
     "seed:menu": "node scripts/seedMenu.js",
+    "seed:users": "node scripts/seedUsers.js",
+    "seed:all": "npm run seed:menu && npm run seed:users",
     "extract:pdf": "node scripts/extractPdf.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "dotenv": "^17.2.1",
     "framer-motion": "^11.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.0.0",

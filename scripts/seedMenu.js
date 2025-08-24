@@ -1,6 +1,9 @@
 const fs = require('fs');
 const { MongoClient } = require('mongodb');
 
+// Load environment variables
+require('dotenv').config({ path: '.env.local' });
+
 async function seedMenu() {
   const MONGODB_URI = process.env.MONGODB_URI;
   
