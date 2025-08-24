@@ -4,7 +4,7 @@
 
 # === REQUIRED FOR MONGODB ===
 
-MONGODB_URI=mongodb+srv://your-username:your-password@your-cluster.mongodb.net/bong-flavours?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://debdootmanna:MongoDB123@cluster0.8mfaf.mongodb.net/bong-flavours?retryWrites=true&w=majority
 
 # === REQUIRED FOR AUTHENTICATION ===
 
@@ -13,8 +13,8 @@ NEXTAUTH_SECRET=prod-bong-flavours-nextauth-secure-random-string-32-chars-minimu
 
 # === REQUIRED FOR VERCEL DEPLOYMENT ===
 
-NEXTAUTH_URL=https://bong-flavours-55e3ez86f-debdootmannas-projects.vercel.app
-NEXT_PUBLIC_SITE_URL=https://bong-flavours-55e3ez86f-debdootmannas-projects.vercel.app
+NEXTAUTH_URL=https://bong-flavours-bxp05nn00-debdootmannas-projects.vercel.app
+NEXT_PUBLIC_SITE_URL=https://bong-flavours-bxp05nn00-debdootmannas-projects.vercel.app
 
 # === EMAIL CONFIGURATION (Using your Gmail) ===
 
