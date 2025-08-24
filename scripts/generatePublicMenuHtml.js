@@ -21,8 +21,12 @@ function generatePublicMenuHtml() {
       return `<a href="#${anchorId}" class="nav-link">${category}</a>`;
     }).join('');
 
-    // Generate menu sections
-    const sectionsHtml = categories.map(category => {
+    // Generate menu sections and split into two columns
+    const midpoint = Math.ceil(categories.length / 2);
+    const leftCategories = categories.slice(0, midpoint);
+    const rightCategories = categories.slice(midpoint);
+    
+    const generateCategorySection = (category) => {
       const anchorId = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
       const items = menuData.filter(item => item.category === category);
       
@@ -58,7 +62,10 @@ function generatePublicMenuHtml() {
           </div>
         </section>
       `;
-    }).join('');
+    };
+    
+    const leftColumnHtml = leftCategories.map(generateCategorySection).join('');
+    const rightColumnHtml = rightCategories.map(generateCategorySection).join('');
 
     const html = `
 <!DOCTYPE html>
@@ -91,9 +98,33 @@ function generatePublicMenuHtml() {
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+        }
+        
+        /* 2-Column Book Layout */
+        .menu-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        
+        .menu-column {
+            background: var(--brand-cream);
+            color: var(--brand-dark);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            min-height: calc(100vh - 200px);
+        }
+        
+        @media (max-width: 768px) {
+            .menu-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
         }
         
         .header {
@@ -314,7 +345,12 @@ function generatePublicMenuHtml() {
         </div>
         
         <main class="menu-content">
-            ${sectionsHtml}
+            <div class="menu-column">
+                ${leftColumnHtml}
+            </div>
+            <div class="menu-column">
+                ${rightColumnHtml}
+            </div>
         </main>
         
         <footer class="footer">

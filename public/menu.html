@@ -29,9 +29,33 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+        }
+        
+        /* 2-Column Book Layout */
+        .menu-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        
+        .menu-column {
+            background: var(--brand-cream);
+            color: var(--brand-dark);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            min-height: calc(100vh - 200px);
+        }
+        
+        @media (max-width: 768px) {
+            .menu-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
         }
         
         .header {
@@ -252,7 +276,8 @@
         </div>
         
         <main class="menu-content">
-            
+            <div class="menu-column">
+                
         <section id="shorbot" class="menu-section">
           <h2 class="category-title">Shorbot</h2>
           <div class="items-grid">
@@ -888,6 +913,9 @@
           </div>
         </section>
       
+            </div>
+            <div class="menu-column">
+                
         <section id="main-course" class="menu-section">
           <h2 class="category-title">Main Course</h2>
           <div class="items-grid">
@@ -1492,6 +1520,7 @@
           </div>
         </section>
       
+            </div>
         </main>
         
         <footer class="footer">

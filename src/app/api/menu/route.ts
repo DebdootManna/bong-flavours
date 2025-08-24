@@ -23,8 +23,8 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search')
     const vegFilter = searchParams.get('veg')
     
-    // Start with all menu items
-    let filteredItems: MenuItem[] = menuData.items
+    // Start with all menu items (the JSON file is directly an array)
+    let filteredItems: MenuItem[] = menuData
 
     // Apply category filter
     if (category && category !== 'All') {

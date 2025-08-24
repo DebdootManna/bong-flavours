@@ -254,7 +254,7 @@ export default function BookingPage() {
               <div className={`mt-4 p-4 rounded-lg ${
                 message.includes('successfully') 
                   ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'
+                  : 'bg-[#6F1D1B] text-[#FFE6A7]'
               }`}>
                 {message}
               </div>

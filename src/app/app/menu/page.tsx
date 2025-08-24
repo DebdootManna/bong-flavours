@@ -154,7 +154,7 @@ const MenuPage = () => {
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-xl font-semibold text-[#6F1D1B]">{item.name}</h3>
                 <span className={`text-sm px-2 py-1 rounded ${
-                  item.veg ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  item.veg ? 'bg-green-100 text-green-800' : 'bg-[#6F1D1B] text-[#FFE6A7]'
                 }`}>
                   {item.veg ? 'VEG' : 'NON-VEG'}
                 </span>
