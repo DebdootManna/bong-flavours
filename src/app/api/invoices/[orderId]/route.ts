@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
-import Order, { IOrder } from '@/models/Order'
+import Order from '@/models/Order'
 import { verifyToken } from '@/lib/auth'
 import { generateInvoicePDF } from '@/lib/invoice'
 
 // GET /api/invoices/[orderId] - Generate and download invoice
 export async function GET(
   req: NextRequest,
-  { params }: { params: { orderId: string } }
+  context: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const { orderId } = await context.params
     const token = req.cookies.get('auth-token')?.value
     
     if (!token) {
@@ -21,7 +22,7 @@ export async function GET(
     await dbConnect()
 
     // Find order
-    const query: { _id: string; userId?: string } = { _id: params.orderId }
+    const query: { _id: string; userId?: string } = { _id: orderId }
     
     // If not admin, only allow access to own orders
     if (payload.role !== 'admin') {

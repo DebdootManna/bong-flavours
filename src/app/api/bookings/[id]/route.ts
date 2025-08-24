@@ -14,9 +14,10 @@ const updateBookingSchema = z.object({
 // GET /api/bookings/[id] - Get specific booking
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const token = req.cookies.get('auth-token')?.value
     
     if (!token) {
@@ -28,7 +29,7 @@ export async function GET(
     await dbConnect()
 
     // Find booking
-    const query: { _id: string; userId?: string } = { _id: params.id }
+    const query: { _id: string; userId?: string } = { _id: id }
     
     // If not admin, only allow access to own bookings
     if (payload.role !== 'admin') {
@@ -56,9 +57,10 @@ export async function GET(
 // PUT /api/bookings/[id] - Update booking (admin only)
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const token = req.cookies.get('auth-token')?.value
     
     if (!token) {
@@ -81,7 +83,7 @@ export async function PUT(
 
     // Update booking
     const booking = await Booking.findByIdAndUpdate(
-      params.id,
+      id,
       validatedData,
       { new: true }
     ).populate('userId', 'name email phone')
@@ -114,9 +116,10 @@ export async function PUT(
 // DELETE /api/bookings/[id] - Cancel booking
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const token = req.cookies.get('auth-token')?.value
     
     if (!token) {
@@ -128,7 +131,7 @@ export async function DELETE(
     await dbConnect()
 
     // Find booking
-    const query: { _id: string; userId?: string } = { _id: params.id }
+    const query: { _id: string; userId?: string } = { _id: id }
     
     // If not admin, only allow access to own bookings
     if (payload.role !== 'admin') {
