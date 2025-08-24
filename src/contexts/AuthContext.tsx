@@ -33,7 +33,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // First check localStorage for immediate user state
       const storedUser = localStorage.getItem('user')
       if (storedUser) {
-        console.log('Found user in localStorage:', JSON.parse(storedUser))
         setUser(JSON.parse(storedUser))
       }
       
@@ -41,11 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch('/api/auth/me')
       if (response.ok) {
         const userData = await response.json()
-        console.log('Server auth verification successful:', userData.user)
         setUser(userData.user)
         localStorage.setItem('user', JSON.stringify(userData.user))
       } else {
-        console.log('Server auth verification failed, clearing localStorage')
         // Clear localStorage if server auth fails
         localStorage.removeItem('user')
         setUser(null)

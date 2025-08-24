@@ -34,28 +34,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = async (demoEmail: string, demoPassword: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setLoading(true);
-    setError('');
-
-    try {
-      const user = await login(demoEmail, demoPassword);
-      
-      // Redirect based on user role
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/app/menu');
-      }
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Demo login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8">
@@ -120,45 +98,6 @@ export default function LoginPage() {
               </button>
             </div>
           </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gradient-to-br from-orange-50 to-red-50 text-gray-500">
-                  Or try demo accounts
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 gap-3">
-              <button
-                onClick={() => handleDemoLogin('admin@bongflavours.com', 'admin123')}
-                disabled={loading}
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Login as Admin
-              </button>
-              
-              <button
-                onClick={() => handleDemoLogin('raj.kumar@example.com', 'customer123')}
-                disabled={loading}
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Login as Raj Kumar
-              </button>
-
-              <button
-                onClick={() => handleDemoLogin('priya.sharma@example.com', 'customer123')}
-                disabled={loading}
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Login as Priya Sharma
-              </button>
-            </div>
-          </div>
 
           <div className="text-center">
             <Link
