@@ -11,6 +11,16 @@ interface MenuItem {
   veg: boolean
 }
 
+interface TransformedMenuItem {
+  _id: string
+  name: string
+  category: string
+  price: number
+  description?: string
+  isVeg: boolean
+  isAvailable: boolean
+}
+
 export async function GET(req: NextRequest) {
   try {
     // Read the menu data from the JSON file
@@ -47,7 +57,15 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      items: filteredItems,
+      items: filteredItems.map((item: MenuItem): TransformedMenuItem => ({
+        _id: item.id,
+        name: item.name,
+        category: item.category,
+        price: item.price,
+        description: item.description,
+        isVeg: item.veg,
+        isAvailable: true // All items are available by default
+      })),
       total: filteredItems.length
     })
 

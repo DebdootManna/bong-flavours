@@ -1,99 +1,121 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 interface MenuItem {
-  id: string
+  _id: string
   name: string
-  category: string
+  description: string
   price: number
-  description?: string
-  veg: boolean
+  category: string
+  isVeg: boolean
+  isAvailable: boolean
+  image?: string
 }
 
-const MenuPage = () => {
-  const { user, loading } = useAuth()
-  const { addToCart } = useCart()
+const AuthenticatedMenuPage = () => {
+  const { user, loading: authLoading } = useAuth()
+  const { state, addToCart, removeFromCart, updateQuantity } = useCart()
   const router = useRouter()
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
-  const [filteredItems, setFilteredItems] = useState<MenuItem[]>([])
-  const [categories, setCategories] = useState<string[]>([])
-  const [selectedCategory, setSelectedCategory] = useState('All')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [showVegOnly, setShowVegOnly] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-
-  const filterItems = useCallback(() => {
-    let filtered = menuItems
-
-    if (selectedCategory !== 'All') {
-      filtered = filtered.filter(item => item.category === selectedCategory)
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      )
-    }
-
-    if (showVegOnly) {
-      filtered = filtered.filter(item => item.veg)
-    }
-
-    setFilteredItems(filtered)
-  }, [menuItems, selectedCategory, searchTerm, showVegOnly])
-
-  const fetchMenuItems = async () => {
-    try {
-      const response = await fetch('/api/menu')
-      const data = await response.json()
-      
-      if (data.success) {
-        setMenuItems(data.items)
-        const uniqueCategories = Array.from(new Set(data.items.map((item: MenuItem) => item.category)))
-        setCategories(['All', ...uniqueCategories.filter(cat => typeof cat === 'string')])
-      }
-    } catch (error) {
-      console.error('Error fetching menu:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [searchTerm, setSearchTerm] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    // Only redirect if we're sure about the auth state (not loading) and user is not authenticated
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       router.push('/login')
       return
     }
-  }, [user, loading, router])
+  }, [user, authLoading, router])
 
   useEffect(() => {
-    fetchMenuItems()
-  }, [])
+    if (user) {
+      fetchMenu()
+    }
+  }, [user])
 
-  useEffect(() => {
-    filterItems()
-  }, [filterItems])
+  const fetchMenu = async () => {
+    try {
+      const response = await fetch('/api/menu')
+      if (response.ok) {
+        const data = await response.json()
+        setMenuItems(data.items || [])
+      } else {
+        setError('Failed to load menu')
+      }
+    } catch (error) {
+      console.error('Error fetching menu:', error)
+      setError('Failed to load menu')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const categories = [
+    { id: 'All', name: 'All' },
+    { id: 'Shorbot', name: 'Shorbot' },
+    { id: 'Starters', name: 'Starters' },
+    { id: 'Kolkata Kathi Roll & Mughlai Paratha', name: 'Kathi Roll & Mughlai Paratha' },
+    { id: 'Kolkata Biryani', name: 'Kolkata Biryani' },
+    { id: 'Kolkata Chinese', name: 'Kolkata Chinese' },
+    { id: 'Main Course', name: 'Main Course' },
+    { id: 'Rice', name: 'Rice' },
+    { id: 'Roti/Paratha/Loochi (Puri)', name: 'Roti/Paratha/Loochi (Puri)' },
+    { id: 'Accompaniments & Desserts', name: 'Accompaniments & Desserts' }
+  ]
+
+  const filteredItems = menuItems.filter(item => {
+    if (selectedCategory !== 'All' && item.category !== selectedCategory) return false
+    if (showVegOnly && !item.isVeg) return false
+    if (searchTerm && !item.name.toLowerCase().includes(searchTerm.toLowerCase())) return false
+    return true
+  })
+
+  const getItemQuantityInCart = (itemId: string) => {
+    const cartItem = state.items.find(item => item.id === itemId)
+    return cartItem ? cartItem.quantity : 0
+  }
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart({
-      id: item.id,
+      id: item._id,
+      menuItem: item._id,
       name: item.name,
       price: item.price,
-      quantity: 1,
-      menuItem: item.id
+      quantity: 1
     })
   }
 
-  if (loading || isLoading) {
+  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
+    if (newQuantity === 0) {
+      removeFromCart(itemId, undefined)
+    } else {
+      updateQuantity(itemId, undefined, newQuantity)
+    }
+  }
+
+  const getTotalItems = () => {
+    return state.items.reduce((total, item) => total + item.quantity, 0)
+  }
+
+  const getTotalPrice = () => {
+    return state.items.reduce((total, item) => total + (item.price * item.quantity), 0)
+  }
+
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FFE6A7]">
-        <div className="text-[#6F1D1B] text-xl">Loading menu...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6F1D1B] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading menu...</p>
+        </div>
       </div>
     )
   }
@@ -102,85 +124,193 @@ const MenuPage = () => {
     return null
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Menu</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={fetchMenu}
+            className="bg-[#6F1D1B] text-white px-6 py-3 rounded-md hover:bg-[#432818] transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-[#FFE6A7] py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-[#6F1D1B] text-center mb-8">Our Menu</h1>
-        
-        {/* Filters */}
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-wrap gap-4 justify-center">
-            <input
-              type="text"
-              placeholder="Search dishes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border border-[#432818] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6F1D1B]"
-            />
-            <label className="flex items-center">
+    <div className="min-h-screen" style={{ backgroundColor: '#FFE6A7' }}>
+      {/* Header */}
+      <div className="bg-white shadow-md border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Our Menu</h1>
+              <p className="text-gray-600 text-sm">Authentic Bengali Cuisine</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              {/* Cart Summary */}
+              <Link 
+                href="/app/cart"
+                className="flex items-center bg-[#6F1D1B] text-white px-4 py-2 rounded-md hover:bg-[#432818] transition-colors"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0h9" />
+                </svg>
+                Cart ({getTotalItems()}) - ₹{getTotalPrice().toFixed(2)}
+              </Link>
+              
+              {/* Profile Button */}
+              <Link
+                href="/app/profile"
+                className="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Profile
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex items-center space-x-4">
               <input
-                type="checkbox"
-                checked={showVegOnly}
-                onChange={(e) => setShowVegOnly(e.target.checked)}
-                className="mr-2"
+                type="text"
+                placeholder="Search dishes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6F1D1B]"
               />
-              <span className="text-[#432818]">Vegetarian Only</span>
-            </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={showVegOnly}
+                  onChange={(e) => setShowVegOnly(e.target.checked)}
+                  className="rounded border-gray-300 text-[#6F1D1B] focus:ring-[#6F1D1B]"
+                />
+                <span className="text-gray-700">Vegetarian Only</span>
+              </label>
+            </div>
           </div>
           
-          <div className="flex flex-wrap gap-2 justify-center">
+          {/* Category Buttons */}
+          <div className="flex flex-wrap gap-2 mt-4">
             {categories.map((category) => (
               <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-[#6F1D1B] text-[#FFE6A7]'
-                    : 'bg-[#BB9457] text-[#432818] hover:bg-[#99582A] hover:text-[#FFE6A7]'
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedCategory === category.id
+                    ? 'bg-[#6F1D1B] text-white'
+                    : 'bg-[#BB9457] text-[#432818] hover:bg-[#99582A] hover:text-white'
                 }`}
               >
-                {category}
+                {category.name}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Menu Items */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-lg shadow-lg p-6 border border-[#BB9457]"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-semibold text-[#6F1D1B]">{item.name}</h3>
-                <span className={`text-sm px-2 py-1 rounded ${
-                  item.veg ? 'bg-green-100 text-green-800' : 'bg-[#6F1D1B] text-[#FFE6A7]'
-                }`}>
-                  {item.veg ? 'VEG' : 'NON-VEG'}
-                </span>
-              </div>
-              
-              {item.description && (
-                <p className="text-[#432818] text-sm mb-4">{item.description}</p>
-              )}
-              
-              <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-[#6F1D1B]">₹{item.price}</span>
-                <button
-                  onClick={() => handleAddToCart(item)}
-                  className="bg-[#6F1D1B] text-[#FFE6A7] px-4 py-2 rounded-lg hover:bg-[#99582A] transition-colors"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredItems.length === 0 && (
+        {/* Menu Items Grid */}
+        {filteredItems.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[#432818] text-xl">No items found matching your criteria.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No items found</h3>
+            <p className="text-gray-600">Try adjusting your filters or search term.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredItems.map((item) => {
+              const quantityInCart = getItemQuantityInCart(item._id)
+              
+              return (
+                <div key={item._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            item.isVeg 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {item.isVeg ? 'VEG' : 'NON-VEG'}
+                          </span>
+                        </div>
+                        {item.description && (
+                          <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-xl font-bold text-[#6F1D1B]">₹{item.price}</span>
+                      <div className="text-sm">
+                        {item.isAvailable ? (
+                          <span className="text-green-600 font-medium">Available</span>
+                        ) : (
+                          <span className="text-red-600 font-medium">Out of Stock</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Add to Cart Controls */}
+                    {!item.isAvailable ? (
+                      <button
+                        disabled
+                        className="w-full bg-gray-300 text-gray-500 py-2 px-4 rounded-md cursor-not-allowed"
+                      >
+                        Out of Stock
+                      </button>
+                    ) : quantityInCart === 0 ? (
+                      <button
+                        onClick={() => handleAddToCart(item)}
+                        className="w-full bg-[#6F1D1B] text-white py-2 px-4 rounded-md hover:bg-[#432818] transition-colors font-medium"
+                      >
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <div className="flex items-center justify-between bg-[#6F1D1B] text-white rounded-md">
+                        <button
+                          onClick={() => handleUpdateQuantity(item._id, quantityInCart - 1)}
+                          className="px-4 py-2 hover:bg-[#432818] rounded-l-md transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="px-4 py-2 font-medium">{quantityInCart}</span>
+                        <button
+                          onClick={() => handleUpdateQuantity(item._id, quantityInCart + 1)}
+                          className="px-4 py-2 hover:bg-[#432818] rounded-r-md transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Fixed Checkout Button */}
+        {getTotalItems() > 0 && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+            <Link
+              href="/app/checkout"
+              className="bg-[#6F1D1B] text-white px-8 py-3 rounded-full shadow-lg hover:bg-[#432818] transition-colors font-semibold"
+            >
+              Proceed to Checkout ({getTotalItems()} items) - ₹{getTotalPrice().toFixed(2)}
+            </Link>
           </div>
         )}
       </div>
@@ -188,4 +318,4 @@ const MenuPage = () => {
   )
 }
 
-export default MenuPage
+export default AuthenticatedMenuPage

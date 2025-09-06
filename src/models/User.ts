@@ -7,6 +7,8 @@ export interface IUser extends mongoose.Document {
   password: string
   role: 'customer' | 'admin'
   address?: string
+  city?: string
+  zipCode?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -46,6 +48,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     maxlength: [500, 'Address cannot exceed 500 characters']
+  },
+  city: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'City cannot exceed 100 characters']
+  },
+  zipCode: {
+    type: String,
+    trim: true,
+    match: [/^[1-9][0-9]{5}$/, 'Please enter a valid 6-digit PIN code']
   }
 }, {
   timestamps: true

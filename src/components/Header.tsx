@@ -13,7 +13,7 @@ export default function Header() {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Menu', href: '/menu' },
+    { name: 'Menu', href: user ? '/app/menu' : '/menu' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'Booking', href: '/booking' },
   ]
@@ -61,13 +61,6 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <Link
-                  href="/app/menu"
-                  className="text-brand-cream hover:text-brand-tan transition-colors duration-200"
-                >
-                  Order Online
-                </Link>
-                
                 {/* Cart Icon */}
                 <Link href="/app/cart" className="relative">
                   <div className="text-brand-cream hover:text-brand-tan transition-colors duration-200">
@@ -78,6 +71,13 @@ export default function Header() {
                       </span>
                     )}
                   </div>
+                </Link>
+                
+                <Link
+                  href="/app/profile"
+                  className="text-brand-cream hover:text-brand-tan transition-colors duration-200"
+                >
+                  Profile
                 </Link>
                 
                 <div className="flex items-center space-x-2">
@@ -148,18 +148,18 @@ export default function Header() {
               {user ? (
                 <>
                   <Link
-                    href="/app/menu"
+                    href="/app/cart"
                     className="block text-brand-cream hover:text-brand-tan transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Order Online
+                    Cart ({cartState.items.reduce((sum, item) => sum + item.quantity, 0)})
                   </Link>
                   <Link
-                    href="/account"
+                    href="/app/profile"
                     className="block text-brand-cream hover:text-brand-tan transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    My Account
+                    Profile
                   </Link>
                   <button
                     onClick={() => {
