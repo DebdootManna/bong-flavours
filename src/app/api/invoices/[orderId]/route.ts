@@ -4,6 +4,15 @@ import Order from '@/models/Order'
 import { verifyToken } from '@/lib/auth'
 import { generateInvoicePDF } from '@/lib/invoice'
 
+interface OrderItem {
+  menuItemId: string
+  name: string
+  price: number
+  quantity: number
+  variant?: string
+  specialInstructions?: string
+}
+
 // GET /api/invoices/[orderId] - Generate and download invoice
 export async function GET(
   req: NextRequest,
@@ -47,8 +56,33 @@ export async function GET(
     // In a real app, you might want to restrict this based on business rules
 
     try {
+      // Prepare invoice data
+      const invoiceData = {
+        orderId: order.orderNumber,
+        customerName: order.customerInfo.name,
+        customerEmail: order.customerInfo.email,
+        customerPhone: order.customerInfo.phone,
+        deliveryAddress: order.deliveryInfo.address,
+        items: order.items.map((item: OrderItem) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        subtotal: order.subtotal,
+        tax: order.tax,
+        total: order.total,
+        orderDate: new Date(order.createdAt).toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        paymentMethod: order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
+      }
+
       // Generate PDF invoice
-      const pdfBuffer = await generateInvoicePDF(order)
+      const pdfBuffer = await generateInvoicePDF(invoiceData)
       
       // Update order with invoice URL (in a real app, you'd upload to S3/CDN)
       const invoiceUrl = `/api/invoices/${order._id}`

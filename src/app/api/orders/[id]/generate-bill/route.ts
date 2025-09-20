@@ -14,7 +14,7 @@ interface OrderItem {
   specialInstructions?: string
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     // Verify authentication
     const token = req.cookies.get('auth-token')?.value
@@ -25,6 +25,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const payload = verifyToken(token)
     await dbConnect()
+
+    // Await params for Next.js 15 compatibility
+    const params = await context.params
 
     // Get order details
     const order = await Order.findById(params.id).populate('userId', 'name email phone')

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/mailer'
 
 // GET /api/test-email - Test email functionality
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     console.log('Testing email configuration...')
     
