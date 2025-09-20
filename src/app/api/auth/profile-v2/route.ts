@@ -3,15 +3,29 @@ import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
 import { verifyToken } from '@/lib/auth'
 
-// GET /api/auth/profile - Get user profile
+function getTokenFromRequest(request: NextRequest): string | null {
+  // Try cookie first
+  const cookieToken = request.cookies.get('auth-token')?.value
+  if (cookieToken) {
+    return cookieToken
+  }
+  
+  // Try Authorization header
+  const authHeader = request.headers.get('Authorization')
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7)
+  }
+  
+  return null
+}
+
+// GET /api/auth/profile-v2 - Get user profile (supports both cookie and bearer token)
 export async function GET(request: NextRequest) {
   try {
     await connectDB()
 
-    const token = request.cookies.get('auth-token')?.value
-    console.log('Profile GET - Token present:', !!token)
-    console.log('Profile GET - All cookies:', request.cookies.getAll().map(c => c.name))
-    console.log('Profile GET - Headers:', Object.fromEntries(request.headers.entries()))
+    const token = getTokenFromRequest(request)
+    console.log('Profile V2 GET - Token found via:', token ? (request.cookies.get('auth-token')?.value ? 'cookie' : 'header') : 'none')
     
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized - No token' }, { status: 401 })
@@ -19,33 +33,33 @@ export async function GET(request: NextRequest) {
 
     try {
       const decoded = verifyToken(token)
-      console.log('Profile GET - Token decoded successfully, user ID:', decoded.id)
+      console.log('Profile V2 GET - Token decoded successfully, user ID:', decoded.id)
       const user = await User.findById(decoded.id).select('-password')
 
       if (!user) {
-        console.log('Profile GET - User not found for ID:', decoded.id)
+        console.log('Profile V2 GET - User not found for ID:', decoded.id)
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
       }
 
-      console.log('Profile GET - User found:', user.name)
+      console.log('Profile V2 GET - User found:', user.name)
       return NextResponse.json({ user })
     } catch (tokenError) {
-      console.log('Profile GET - Token verification failed:', tokenError)
+      console.log('Profile V2 GET - Token verification failed:', tokenError)
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
   } catch (error) {
-    console.error('Profile fetch error:', error)
+    console.error('Profile V2 fetch error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
-// PUT /api/auth/profile - Update user profile
+// PUT /api/auth/profile-v2 - Update user profile (supports both cookie and bearer token)
 export async function PUT(request: NextRequest) {
   try {
     await connectDB()
 
-    const token = request.cookies.get('auth-token')?.value
-    console.log('Profile PUT - Token present:', !!token)
+    const token = getTokenFromRequest(request)
+    console.log('Profile V2 PUT - Token found via:', token ? (request.cookies.get('auth-token')?.value ? 'cookie' : 'header') : 'none')
     
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized - No token' }, { status: 401 })
@@ -53,16 +67,16 @@ export async function PUT(request: NextRequest) {
 
     try {
       const decoded = verifyToken(token)
-      console.log('Profile PUT - Token decoded successfully, user ID:', decoded.id)
+      console.log('Profile V2 PUT - Token decoded successfully, user ID:', decoded.id)
       const user = await User.findById(decoded.id)
 
       if (!user) {
-        console.log('Profile PUT - User not found for ID:', decoded.id)
+        console.log('Profile V2 PUT - User not found for ID:', decoded.id)
         return NextResponse.json({ error: 'User not found' }, { status: 404 })
       }
 
       const body = await request.json()
-      console.log('Profile PUT - Update data:', body)
+      console.log('Profile V2 PUT - Update data:', body)
       const { name, email, phone, address, city, zipCode } = body
 
       // Update user fields
@@ -74,7 +88,7 @@ export async function PUT(request: NextRequest) {
       user.zipCode = zipCode || user.zipCode
 
       await user.save()
-      console.log('Profile PUT - User updated successfully')
+      console.log('Profile V2 PUT - User updated successfully')
 
       // Return updated user without password
       const updatedUser = await User.findById(user._id).select('-password')
@@ -84,11 +98,11 @@ export async function PUT(request: NextRequest) {
         user: updatedUser 
       })
     } catch (tokenError) {
-      console.log('Profile PUT - Token verification failed:', tokenError)
+      console.log('Profile V2 PUT - Token verification failed:', tokenError)
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
   } catch (error) {
-    console.error('Profile update error:', error)
+    console.error('Profile V2 update error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

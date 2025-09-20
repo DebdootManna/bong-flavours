@@ -7,13 +7,14 @@ import { z } from 'zod'
 const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   email: z.string().email('Invalid email address'),
-  phone: z.string().regex(/^[6-9]\d{9}$/, 'Invalid Indian phone number'),
+  phone: z.string().regex(/^[6-9]\d{9}$/, 'Phone number must be 10 digits starting with 6-9'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
+    console.log('Signup attempt with data:', { ...body, password: '[REDACTED]' })
     
     // Validate input
     const validatedData = signupSchema.parse(body)
@@ -64,7 +65,8 @@ export async function POST(req: NextRequest) {
         name: user.name,
         email: user.email,
         role: user.role
-      }
+      },
+      token // Include token in response body for localStorage storage
     })
     
     response.cookies.set('auth-token', token, {
@@ -78,6 +80,7 @@ export async function POST(req: NextRequest) {
     
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log('Validation errors:', error.errors)
       return NextResponse.json(
         { message: 'Validation error', errors: error.errors },
         { status: 400 }

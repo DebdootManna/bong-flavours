@@ -32,12 +32,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // First check localStorage for immediate user state
       const storedUser = localStorage.getItem('user')
+      const storedToken = localStorage.getItem('auth-token')
+      
       if (storedUser) {
         setUser(JSON.parse(storedUser))
       }
       
-      // Then verify with server
-      const response = await fetch('/api/auth/me')
+      // Then verify with server using stored token
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+      
+      if (storedToken) {
+        headers['Authorization'] = `Bearer ${storedToken}`
+      }
+      
+      const response = await fetch('/api/auth/profile-v2', {
+        headers,
+        credentials: 'include'
+      })
+      
       if (response.ok) {
         const userData = await response.json()
         setUser(userData.user)
@@ -45,12 +59,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         // Clear localStorage if server auth fails
         localStorage.removeItem('user')
+        localStorage.removeItem('auth-token')
         setUser(null)
       }
     } catch (error) {
       console.error('Auth check failed:', error)
       // Clear localStorage on error
       localStorage.removeItem('user')
+      localStorage.removeItem('auth-token')
       setUser(null)
     } finally {
       setLoading(false)
@@ -58,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    const response = await fetch('/api/auth/login', {
+    const response = await fetch('/api/auth/login-v2', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,8 +89,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const data = await response.json()
     setUser(data.user)
-    // Also store in localStorage for persistence
+    
+    // Store both user data and auth token in localStorage
     localStorage.setItem('user', JSON.stringify(data.user))
+    if (data.token) {
+      localStorage.setItem('auth-token', data.token)
+    }
+    
     return data.user
   }
 
@@ -94,8 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const data = await response.json()
     setUser(data.user)
-    // Also store in localStorage for persistence
+    
+    // Store both user data and auth token in localStorage
     localStorage.setItem('user', JSON.stringify(data.user))
+    if (data.token) {
+      localStorage.setItem('auth-token', data.token)
+    }
   }
 
   const logout = async () => {
@@ -106,6 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUser(null)
       localStorage.removeItem('user') // Clear localStorage
+      localStorage.removeItem('auth-token') // Clear auth token
       window.location.href = '/'
     }
   }

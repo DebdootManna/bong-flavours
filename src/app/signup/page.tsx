@@ -27,6 +27,25 @@ export default function SignupPage() {
     setLoading(true);
     setError('');
 
+    // Client-side validation
+    if (formData.name.length < 2) {
+      setError('Name must be at least 2 characters');
+      setLoading(false);
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
+    
+    if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+      setError('Phone number must be exactly 10 digits starting with 6, 7, 8, or 9');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -45,7 +64,13 @@ export default function SignupPage() {
         // Redirect to menu page
         router.push('/menu');
       } else {
-        setError(data.error || 'Signup failed');
+        // Handle validation errors specifically
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMessages = data.errors.map((err: { message: string }) => err.message).join(', ');
+          setError(errorMessages);
+        } else {
+          setError(data.message || data.error || 'Signup failed');
+        }
       }
     } catch {
       setError('Network error. Please try again.');
@@ -113,10 +138,11 @@ export default function SignupPage() {
                 autoComplete="tel"
                 required
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your phone number"
+                placeholder="10-digit phone number (e.g., 9876543210)"
                 value={formData.phone}
                 onChange={handleChange}
               />
+              <p className="mt-1 text-xs text-gray-500">Enter 10 digits starting with 6, 7, 8, or 9</p>
             </div>
 
             <div>

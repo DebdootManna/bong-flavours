@@ -10,7 +10,7 @@ export interface IOrder extends mongoose.Document {
     address: string
   }
   items: Array<{
-    menuItemId: mongoose.Types.ObjectId
+    menuItemId: string
     name: string
     price: number
     quantity: number
@@ -74,8 +74,7 @@ const orderSchema = new mongoose.Schema({
   },
   items: [{
     menuItemId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'MenuItem',
+      type: String,
       required: true
     },
     name: {
@@ -180,4 +179,9 @@ orderSchema.pre('save', async function(next) {
   next()
 })
 
-export default mongoose.models.Order || mongoose.model<IOrder>('Order', orderSchema)
+// Clear any existing model cache to ensure schema changes take effect
+if (mongoose.models.Order) {
+  delete mongoose.models.Order
+}
+
+export default mongoose.model<IOrder>('Order', orderSchema)

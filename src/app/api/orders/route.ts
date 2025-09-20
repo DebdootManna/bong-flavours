@@ -4,6 +4,17 @@ import Order from '@/models/Order'
 import User from '@/models/User'
 import { verifyToken } from '@/lib/auth'
 import { z } from 'zod'
+import { generateInvoicePDF } from '@/lib/invoice'
+import { sendOrderEmail } from '@/lib/mailer'
+
+interface OrderItem {
+  menuItemId: string
+  name: string
+  price: number
+  quantity: number
+  variant?: string
+  specialInstructions?: string
+}
 
 // Order item schema for validation
 const orderItemSchema = z.object({
@@ -36,8 +47,13 @@ const createOrderSchema = z.object({
 // GET /api/orders - Get user's orders
 export async function GET(req: NextRequest) {
   try {
-    // Verify authentication
-    const token = req.cookies.get('auth-token')?.value
+    // Verify authentication - check both header and cookie
+    let token = req.headers.get('authorization')?.replace('Bearer ', '')
+    
+    if (!token) {
+      // Fallback to cookie
+      token = req.cookies.get('auth-token')?.value
+    }
     
     if (!token) {
       return NextResponse.json({ message: 'Not authenticated' }, { status: 401 })
@@ -95,8 +111,13 @@ export async function GET(req: NextRequest) {
 // POST /api/orders - Create new order
 export async function POST(req: NextRequest) {
   try {
-    // Verify authentication
-    const token = req.cookies.get('auth-token')?.value
+    // Verify authentication - check both header and cookie
+    let token = req.headers.get('authorization')?.replace('Bearer ', '')
+    
+    if (!token) {
+      // Fallback to cookie
+      token = req.cookies.get('auth-token')?.value
+    }
     
     if (!token) {
       return NextResponse.json({ message: 'Not authenticated' }, { status: 401 })
@@ -117,6 +138,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 })
     }
 
+    // Generate unique order number
+    const generateOrderNumber = () => {
+      const timestamp = Date.now().toString()
+      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+      return `BF${timestamp.slice(-8)}${random}`
+    }
+
+    let orderNumber = generateOrderNumber()
+    
+    // Ensure uniqueness
+    let existingOrder = await Order.findOne({ orderNumber })
+    while (existingOrder) {
+      orderNumber = generateOrderNumber()
+      existingOrder = await Order.findOne({ orderNumber })
+    }
+
     // Calculate totals
     let subtotal = 0
     validatedData.items.forEach(item => {
@@ -129,6 +166,7 @@ export async function POST(req: NextRequest) {
 
     // Create order data matching the Order model
     const orderData = {
+      orderNumber,
       userId: payload.id,
       customerInfo: validatedData.customerInfo,
       items: validatedData.items,
@@ -147,6 +185,69 @@ export async function POST(req: NextRequest) {
 
     // Populate user details for response
     await order.populate('userId', 'name email phone')
+
+    // Generate and send invoice automatically
+    try {
+      console.log('Generating invoice for order:', order.orderNumber)
+      
+      // Prepare invoice data
+      const invoiceData = {
+        orderId: order.orderNumber,
+        customerName: order.customerInfo.name,
+        customerEmail: order.customerInfo.email,
+        customerPhone: order.customerInfo.phone,
+        deliveryAddress: order.deliveryInfo.address,
+        items: order.items.map((item: OrderItem) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        subtotal: order.subtotal,
+        tax: order.tax,
+        total: order.total,
+        orderDate: new Date(order.createdAt).toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        paymentMethod: order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'
+      }
+
+      // Generate PDF invoice
+      const invoicePdf = await generateInvoicePDF(invoiceData)
+
+      // Prepare email data
+      const emailData = {
+        orderId: order.orderNumber,
+        customerName: order.customerInfo.name,
+        customerEmail: order.customerInfo.email,
+        items: order.items.map((item: OrderItem) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        total: order.total,
+        address: order.deliveryInfo.address,
+        phone: order.customerInfo.phone
+      }
+
+      // Send emails with invoice to both customer and admin
+      await sendOrderEmail(emailData, invoicePdf)
+
+      // Update order to mark invoice as sent
+      await Order.findByIdAndUpdate(order._id, {
+        invoiceUrl: `invoice-${order.orderNumber}.pdf`,
+        updatedAt: new Date()
+      })
+
+      console.log('Invoice generated and sent successfully for order:', order.orderNumber)
+    } catch (invoiceError) {
+      console.error('Failed to generate/send invoice:', invoiceError)
+      // Don't fail the order creation if invoice generation fails
+      // The invoice can be generated later via the separate API endpoint
+    }
 
     return NextResponse.json({
       message: 'Order created successfully',

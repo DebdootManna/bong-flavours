@@ -18,9 +18,9 @@ export async function POST(req: NextRequest) {
     
     // Connect to database
     await dbConnect()
-    
+
     // Find user by email
-    const user = await User.findOne({ email: validatedData.email })
+    const user = await User.findOne({ email: validatedData.email.toLowerCase() })
     
     if (!user) {
       return NextResponse.json(
@@ -28,28 +28,29 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       )
     }
-    
+
     // Verify password
-    const isPasswordValid = await verifyPassword(validatedData.password, user.password)
+    const isValidPassword = await verifyPassword(validatedData.password, user.password)
     
-    if (!isPasswordValid) {
+    if (!isValidPassword) {
       return NextResponse.json(
         { message: 'Invalid email or password' },
         { status: 401 }
       )
     }
-    
-    // Generate JWT token
+
+    // Create JWT token
     const token = signToken({
       id: user._id.toString(),
       email: user.email,
       role: user.role,
       name: user.name
     })
-    
-    // Set HTTP-only cookie
+
+    // Return token in response body for localStorage storage
     const response = NextResponse.json({
       message: 'Login successful',
+      token: token, // Include token in response for localStorage
       user: {
         id: user._id,
         name: user.name,
@@ -58,21 +59,14 @@ export async function POST(req: NextRequest) {
       }
     })
     
+    // Also set cookie as fallback
     console.log('Setting auth-token cookie for user:', user.email)
     response.cookies.set('auth-token', token, {
-      httpOnly: true,
-      secure: false, // Set to false for development
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 // 7 days
-    })
-    
-    console.log('Cookie set with options:', {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60
+      maxAge: 7 * 24 * 60 * 60 // 7 days
     })
     
     return response

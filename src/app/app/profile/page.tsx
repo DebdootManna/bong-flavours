@@ -42,7 +42,18 @@ const ProfilePage = () => {
     if (!user) return
     
     try {
-      const response = await fetch('/api/auth/profile', {
+      // Get token from localStorage
+      const token = localStorage.getItem('auth-token')
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      const response = await fetch('/api/auth/profile-v2', {
+        headers,
         credentials: 'include'
       })
       
@@ -83,7 +94,18 @@ const ProfilePage = () => {
 
   const fetchOrders = useCallback(async () => {
     try {
+      // Get token from localStorage
+      const token = localStorage.getItem('auth-token')
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
       const response = await fetch('/api/orders', {
+        headers,
         credentials: 'include'
       })
       
@@ -113,11 +135,19 @@ const ProfilePage = () => {
     if (!profile) return
 
     try {
-      const response = await fetch('/api/auth/profile', {
+      // Get token from localStorage
+      const token = localStorage.getItem('auth-token')
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      const response = await fetch('/api/auth/profile-v2', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers,
         credentials: 'include',
         body: JSON.stringify(profile)
       })

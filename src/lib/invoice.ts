@@ -1,6 +1,6 @@
-// import puppeteer from 'puppeteer'
-// Puppeteer temporarily disabled for faster deployment
-// TODO: Re-enable for invoice generation feature
+import puppeteer from 'puppeteer'
+import fs from 'fs'
+// PDF invoice generation system for Bong Flavours restaurant
 
 interface InvoiceData {
   orderId: string
@@ -20,9 +20,6 @@ interface InvoiceData {
   paymentMethod: string
 }
 
-// Temporarily disabled for faster deployment
-// TODO: Re-enable for invoice functionality
-/*
 function generateInvoiceHTML(data: InvoiceData): string {
   const itemsHTML = data.items.map(item => `
     <tr>
@@ -225,21 +222,55 @@ function generateInvoiceHTML(data: InvoiceData): string {
     </html>
   `
 }
-*/
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function generateInvoicePDF(_data: InvoiceData): Promise<Buffer> {
-  // Temporarily disabled for faster deployment
-  // TODO: Re-enable puppeteer functionality
-  throw new Error('PDF generation temporarily disabled')
-  
-  /*
+export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
   const html = generateInvoiceHTML(data)
   
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-    headless: true
-  })
+  // Configure Puppeteer for different environments
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const puppeteerConfig: Record<string, any> = {
+    args: [
+      '--no-sandbox', 
+      '--disable-setuid-sandbox', 
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process'
+    ],
+    headless: "new" as const
+  }
+
+  // For development: Try to find Chrome, otherwise use bundled Chromium
+  const possibleChromePaths = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium-browser',
+    '/snap/bin/chromium'
+  ]
+
+  let chromeFound = false
+  for (const chromePath of possibleChromePaths) {
+    try {
+      if (fs.existsSync(chromePath)) {
+        puppeteerConfig.executablePath = chromePath
+        chromeFound = true
+        console.log(`Using Chrome at: ${chromePath}`)
+        break
+      }
+    } catch {
+      // Continue to next path
+    }
+  }
+
+  if (!chromeFound) {
+    console.log('Using bundled Chromium for PDF generation')
+    // Remove executablePath to use bundled Chromium
+    delete puppeteerConfig.executablePath
+  }
+  
+  const browser = await puppeteer.launch(puppeteerConfig)
   
   try {
     const page = await browser.newPage()
@@ -260,7 +291,6 @@ export async function generateInvoicePDF(_data: InvoiceData): Promise<Buffer> {
   } finally {
     await browser.close()
   }
-  */
 }
 
 export function calculateOrderTotals(items: Array<{ price: number; quantity: number }>) {
