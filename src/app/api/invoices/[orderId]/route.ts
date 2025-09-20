@@ -11,7 +11,14 @@ export async function GET(
 ) {
   try {
     const { orderId } = await context.params
-    const token = req.cookies.get('auth-token')?.value
+    
+    // Verify authentication - check both header and cookie
+    let token = req.headers.get('authorization')?.replace('Bearer ', '')
+    
+    if (!token) {
+      // Fallback to cookie
+      token = req.cookies.get('auth-token')?.value
+    }
     
     if (!token) {
       return NextResponse.json({ message: 'Not authenticated' }, { status: 401 })
@@ -36,13 +43,8 @@ export async function GET(
       return NextResponse.json({ message: 'Order not found' }, { status: 404 })
     }
 
-    // Check if order is in a valid state for invoice generation
-    if (!['confirmed', 'preparing', 'ready', 'out-for-delivery', 'delivered'].includes(order.status)) {
-      return NextResponse.json(
-        { message: 'Invoice not available for this order status' },
-        { status: 400 }
-      )
-    }
+    // Allow invoice generation for all orders (removed status restriction)
+    // In a real app, you might want to restrict this based on business rules
 
     try {
       // Generate PDF invoice

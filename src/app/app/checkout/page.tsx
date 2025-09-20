@@ -167,11 +167,20 @@ const CheckoutPage = () => {
         notes: deliveryInfo.specialInstructions || undefined
       }
 
+      // Get token from localStorage for API calls
+      const token = localStorage.getItem('auth-token')
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch('/api/orders', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
+        credentials: 'include',
         body: JSON.stringify(orderData),
       })
 
@@ -181,6 +190,10 @@ const CheckoutPage = () => {
       }
 
       const result = await response.json()
+      
+      // Open invoice PDF in new tab
+      const invoiceUrl = `/api/invoices/${result.order._id}`
+      window.open(invoiceUrl, '_blank')
       
       // Clear cart and redirect to success page
       clearCart()

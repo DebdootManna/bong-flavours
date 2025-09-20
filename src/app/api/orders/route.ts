@@ -218,23 +218,29 @@ export async function POST(req: NextRequest) {
       // Generate PDF invoice
       const invoicePdf = await generateInvoicePDF(invoiceData)
 
-      // Prepare email data
-      const emailData = {
-        orderId: order.orderNumber,
-        customerName: order.customerInfo.name,
-        customerEmail: order.customerInfo.email,
-        items: order.items.map((item: OrderItem) => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        total: order.total,
-        address: order.deliveryInfo.address,
-        phone: order.customerInfo.phone
-      }
+      // Try to send emails with invoice to both customer and admin
+      try {
+        // Prepare email data
+        const emailData = {
+          orderId: order.orderNumber,
+          customerName: order.customerInfo.name,
+          customerEmail: order.customerInfo.email,
+          items: order.items.map((item: OrderItem) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
+          })),
+          total: order.total,
+          address: order.deliveryInfo.address,
+          phone: order.customerInfo.phone
+        }
 
-      // Send emails with invoice to both customer and admin
-      await sendOrderEmail(emailData, invoicePdf)
+        await sendOrderEmail(emailData, invoicePdf)
+        console.log('Invoice emails sent successfully for order:', order.orderNumber)
+      } catch (emailError) {
+        console.error('Failed to send invoice emails (order still created):', emailError)
+        // Continue without failing the order - emails can be sent manually later
+      }
 
       // Update order to mark invoice as sent
       await Order.findByIdAndUpdate(order._id, {
@@ -242,9 +248,9 @@ export async function POST(req: NextRequest) {
         updatedAt: new Date()
       })
 
-      console.log('Invoice generated and sent successfully for order:', order.orderNumber)
+      console.log('Invoice generated successfully for order:', order.orderNumber)
     } catch (invoiceError) {
-      console.error('Failed to generate/send invoice:', invoiceError)
+      console.error('Failed to generate invoice:', invoiceError)
       // Don't fail the order creation if invoice generation fails
       // The invoice can be generated later via the separate API endpoint
     }

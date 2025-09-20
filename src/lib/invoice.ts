@@ -241,6 +241,9 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
     headless: "new" as const
   }
 
+  // Clear any environment variables that might override our path detection
+  delete process.env.PUPPETEER_EXECUTABLE_PATH
+
   // For development: Try to find Chrome, otherwise use bundled Chromium
   const possibleChromePaths = [
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
