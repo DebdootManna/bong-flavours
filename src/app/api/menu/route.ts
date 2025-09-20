@@ -6,7 +6,11 @@ interface MenuItem {
   id: string
   name: string
   category: string
-  price: number
+  price?: number
+  variants?: Array<{
+    name: string
+    price: number
+  }>
   description?: string
   veg: boolean
 }
@@ -16,6 +20,10 @@ interface TransformedMenuItem {
   name: string
   category: string
   price: number
+  variants?: Array<{
+    name: string
+    price: number
+  }>
   description?: string
   isVeg: boolean
   isAvailable: boolean
@@ -61,7 +69,8 @@ export async function GET(req: NextRequest) {
         _id: item.id,
         name: item.name,
         category: item.category,
-        price: item.price,
+        price: item.price || (item.variants ? item.variants[0].price : 0), // Use first variant price as default
+        variants: item.variants,
         description: item.description,
         isVeg: item.veg,
         isAvailable: true // All items are available by default

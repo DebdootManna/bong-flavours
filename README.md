@@ -1,6 +1,592 @@
-# 🍛 Bong Flavours - Bengali Restaurant E-commerce Platform
+# Bong Flavours - Bengali Restaurant E-Commerce Platform
 
-A modern, full-stack Bengali restaurant website with complete ordering system, built with Next.js 15, MongoDB, and TypeScript. Features customer authentication, admin dashboard, real-time order management, and comprehensive cart functionality.
+A comprehensive Next.js-based e-commerce platform for a Bengali restaurant featuring advanced order management, automated PDF bill generation, and dual-delivery email system.
+
+## � Features
+
+### Core Functionality
+
+- **Interactive Menu System**: Browse authentic Bengali dishes with detailed descriptions
+- **User Authentication**: Secure login/signup with JWT tokens and dual authentication support
+- **Order Management**: Complete order lifecycle from cart to delivery
+- **Automated Bill Generation**: PDF invoices generated using Puppeteer with professional formatting
+- **Dual Email Delivery**: Bills automatically sent to both customer and admin
+- **Profile Management**: User profile updates with address management
+- **Admin Dashboard**: Order management and system administration
+
+### Technical Highlights
+
+- **Next.js 15.5.0** with App Router and TypeScript
+- **MongoDB Atlas** for data persistence with comprehensive models
+- **Dual Authentication System**: Cookie-based and Bearer token support for browser compatibility
+- **Puppeteer PDF Generation** with Chrome path detection and fallback support
+- **Nodemailer Integration** for reliable email delivery
+- **Responsive Design** with Tailwind CSS
+- **Server-Side Validation** using Zod schemas
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- MongoDB Atlas account or local MongoDB instance
+- SMTP email service (Gmail recommended)
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd bong-flavours
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env.local` file in the root directory:
+
+   ```env
+   # MongoDB Configuration
+   MONGODB_URI=your_mongodb_connection_string
+
+   # JWT Configuration
+   JWT_SECRET=your_super_secure_jwt_secret_key_here
+
+   # Email Configuration (SMTP)
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=your_email@gmail.com
+   SMTP_PASS=your_app_specific_password
+   ADMIN_EMAIL=admin@bongflavours.com
+
+   # Application Configuration
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+
+4. **Start the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the application**
+   Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## 🗄️ MongoDB Database Setup
+
+### Automated Database Setup
+
+The application includes comprehensive MongoDB models with automatic validation and schema enforcement.
+
+### Required Collections
+
+The following collections will be automatically created:
+
+#### 1. Users Collection
+
+```javascript
+{
+  _id: ObjectId,
+  name: String (required),
+  email: String (required, unique, indexed),
+  phone: String (required, unique, indexed),
+  password: String (required, hashed),
+  role: String (enum: ['customer', 'admin'], default: 'customer'),
+  address: String (optional),
+  city: String (optional),
+  zipCode: String (optional),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+#### 2. Orders Collection
+
+```javascript
+{
+  _id: ObjectId,
+  orderNumber: String (required, unique, auto-generated),
+  userId: ObjectId (required, references Users),
+  items: [{
+    menuItemId: String (required),
+    name: String (required),
+    price: Number (required),
+    quantity: Number (required),
+    variant: String (optional),
+    specialInstructions: String (optional)
+  }],
+  customerInfo: {
+    name: String (required),
+    email: String (required),
+    phone: String (required),
+    address: String (required)
+  },
+  deliveryInfo: {
+    address: String (required),
+    phone: String (required),
+    deliveryNotes: String (optional)
+  },
+  total: Number (required),
+  status: String (enum: ['pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled'], default: 'pending'),
+  paymentMethod: String (enum: ['cod', 'online'], default: 'cod'),
+  notes: String (optional),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Database Seeding Instructions for Local Development
+
+#### Method 1: Using MongoDB Compass (Recommended for Beginners)
+
+1. **Install MongoDB Compass**
+   Download from [MongoDB Compass](https://www.mongodb.com/products/compass)
+
+2. **Connect to your MongoDB instance**
+
+   - Local: `mongodb://localhost:27017`
+   - Atlas: Use your connection string from MongoDB Atlas
+
+3. **Create Database**
+
+   - Database name: `bongflavours`
+
+4. **Import Sample Data**
+   Create the following collections and import sample documents:
+
+   **Users Collection Sample:**
+
+   ```json
+   [
+     {
+       "name": "Admin User",
+       "email": "admin@bongflavours.com",
+       "phone": "9876543210",
+       "password": "$2b$10$hashedPasswordHere",
+       "role": "admin",
+       "createdAt": new Date(),
+       "updatedAt": new Date()
+     },
+     {
+       "name": "John Customer",
+       "email": "customer@example.com",
+       "phone": "9876543211",
+       "password": "$2b$10$hashedPasswordHere",
+       "role": "customer",
+       "address": "123 Main Street",
+       "city": "Kolkata",
+       "zipCode": "700001",
+       "createdAt": new Date(),
+       "updatedAt": new Date()
+     }
+   ]
+   ```
+
+#### Method 2: Using MongoDB Shell
+
+1. **Connect to MongoDB**
+
+   ```bash
+   mongosh "your_mongodb_connection_string"
+   ```
+
+2. **Switch to database**
+
+   ```javascript
+   use bongflavours
+   ```
+
+3. **Create admin user**
+
+   ```javascript
+   db.users.insertOne({
+     name: "Admin User",
+     email: "admin@bongflavours.com",
+     phone: "9876543210",
+     password: "$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // "password"
+     role: "admin",
+     createdAt: new Date(),
+     updatedAt: new Date(),
+   });
+   ```
+
+4. **Create sample customer**
+
+   ```javascript
+   db.users.insertOne({
+     name: "Test Customer",
+     email: "customer@example.com",
+     phone: "9876543211",
+     password: "$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // "password"
+     role: "customer",
+     address: "123 Main Street",
+     city: "Kolkata",
+     zipCode: "700001",
+     createdAt: new Date(),
+     updatedAt: new Date(),
+   });
+   ```
+
+5. **Create indexes for performance**
+   ```javascript
+   db.users.createIndex({ email: 1 }, { unique: true });
+   db.users.createIndex({ phone: 1 }, { unique: true });
+   db.orders.createIndex({ userId: 1 });
+   db.orders.createIndex({ orderNumber: 1 }, { unique: true });
+   db.orders.createIndex({ createdAt: -1 });
+   ```
+
+#### Method 3: Using Node.js Seeding Script
+
+Create a seeding script `scripts/seed.js`:
+
+```javascript
+const { MongoClient } = require("mongodb");
+const bcrypt = require("bcryptjs");
+
+const MONGODB_URI = "your_mongodb_connection_string";
+
+async function seedDatabase() {
+  const client = new MongoClient(MONGODB_URI);
+
+  try {
+    await client.connect();
+    const db = client.db("bongflavours");
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash("password", 10);
+
+    // Insert admin user
+    await db.collection("users").insertOne({
+      name: "Admin User",
+      email: "admin@bongflavours.com",
+      phone: "9876543210",
+      password: hashedPassword,
+      role: "admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    // Insert sample customer
+    await db.collection("users").insertOne({
+      name: "Test Customer",
+      email: "customer@example.com",
+      phone: "9876543211",
+      password: hashedPassword,
+      role: "customer",
+      address: "123 Main Street",
+      city: "Kolkata",
+      zipCode: "700001",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log("Database seeded successfully!");
+  } catch (error) {
+    console.error("Seeding failed:", error);
+  } finally {
+    await client.close();
+  }
+}
+
+seedDatabase();
+```
+
+Run the seeding script:
+
+```bash
+node scripts/seed.js
+```
+
+### Environment-Specific Database Configuration
+
+#### For Local Development
+
+```env
+MONGODB_URI=mongodb://localhost:27017/bongflavours
+```
+
+#### For MongoDB Atlas (Production)
+
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bongflavours?retryWrites=true&w=majority
+```
+
+## 🔧 Configuration Guide
+
+### Email Configuration (Gmail)
+
+1. **Enable 2-Factor Authentication** on your Gmail account
+2. **Generate App Password**:
+   - Go to Google Account settings
+   - Security → 2-Step Verification → App passwords
+   - Generate password for "Mail"
+3. **Update Environment Variables**:
+   ```env
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=your_email@gmail.com
+   SMTP_PASS=your_16_character_app_password
+   ```
+
+### MongoDB Atlas Setup
+
+1. **Create MongoDB Atlas Account** at [mongodb.com](https://mongodb.com)
+2. **Create a New Cluster**
+3. **Configure Network Access**:
+   - Add your IP address (or 0.0.0.0/0 for development)
+4. **Create Database User**:
+   - Username/password for database access
+5. **Get Connection String**:
+   - Replace `<password>` with your database user password
+   - Update `MONGODB_URI` in `.env.local`
+
+### JWT Configuration
+
+Generate a secure JWT secret:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Add to `.env.local`:
+
+```env
+JWT_SECRET=your_generated_secret_here
+```
+
+## 🏗️ Project Structure
+
+```
+bong-flavours/
+├── src/
+│   ├── app/
+│   │   ├── api/                 # API routes
+│   │   │   ├── auth/           # Authentication endpoints
+│   │   │   ├── orders/         # Order management
+│   │   │   └── menu/           # Menu system
+│   │   ├── app/                # Protected application routes
+│   │   │   ├── menu/           # Menu browsing
+│   │   │   ├── checkout/       # Order checkout
+│   │   │   └── profile/        # User profile
+│   │   ├── admin/              # Admin dashboard
+│   │   ├── login/              # Authentication pages
+│   │   └── signup/
+│   ├── components/             # Reusable UI components
+│   ├── contexts/               # React contexts (Auth, Cart)
+│   ├── lib/                    # Utility libraries
+│   │   ├── mongodb.ts          # Database connection
+│   │   ├── auth.ts             # Authentication utilities
+│   │   ├── invoice.ts          # PDF generation
+│   │   └── mailer.ts           # Email utilities
+│   ├── models/                 # MongoDB models
+│   └── data/                   # Static data (menu items)
+├── public/                     # Static assets
+└── package.json
+```
+
+## 🔒 Authentication System
+
+### Dual Authentication Support
+
+The application supports both cookie-based and Bearer token authentication for maximum browser compatibility:
+
+1. **Cookie Authentication**: Traditional httpOnly cookies (primary)
+2. **Bearer Token Authentication**: localStorage-based tokens (fallback for VS Code Simple Browser)
+
+### Authentication Flow
+
+1. User logs in via `/api/auth/login-v2`
+2. JWT token stored in both httpOnly cookie and localStorage
+3. API requests check Authorization header first, then cookie
+4. Profile updates work seamlessly across all browser environments
+
+## 📧 Email System
+
+### Bill Generation and Delivery
+
+1. **Order Creation**: Triggers automatic PDF generation
+2. **PDF Generation**: Professional invoice created using Puppeteer
+3. **Dual Delivery**: Email sent to both customer and admin
+4. **Error Handling**: Robust error handling with detailed logging
+
+### Email Templates
+
+- Customer email includes order details and PDF attachment
+- Admin email includes complete order information for processing
+- Professional HTML formatting with Bengali restaurant branding
+
+## 🧪 Testing the Application
+
+### Complete Order Flow Test
+
+1. **Register/Login**:
+
+   ```
+   Email: customer@example.com
+   Password: password
+   ```
+
+2. **Browse Menu**: Navigate to `/app/menu`
+3. **Add Items to Cart**: Select dishes and quantities
+4. **Proceed to Checkout**: Fill in delivery information
+5. **Place Order**: Complete the order process
+6. **Verify Email Delivery**: Check both customer and admin emails for PDF bills
+
+### Authentication Testing
+
+1. **Login Flow**: Test with VS Code Simple Browser and regular browsers
+2. **Profile Updates**: Modify user profile information
+3. **Order History**: View past orders in profile dashboard
+4. **Admin Access**: Login as admin to manage orders
+
+### PDF Generation Testing
+
+The system automatically generates professional PDF bills with:
+
+- Company branding and logo
+- Complete order details
+- Customer and delivery information
+- Itemized pricing and totals
+- Order number and timestamps
+
+## 📊 Admin Features
+
+### Order Management
+
+- View all orders with filtering and pagination
+- Update order status (pending → confirmed → preparing → ready → delivered)
+- Customer information management
+- Revenue tracking and analytics
+
+### User Management
+
+- View customer accounts
+- Order history per customer
+- Communication tools
+
+## 🚀 Deployment
+
+### Production Environment Variables
+
+```env
+# Production MongoDB
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bongflavours_prod
+
+# Secure JWT Secret
+JWT_SECRET=production_secure_secret_32_characters_minimum
+
+# Production Email Configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=production_email@bongflavours.com
+SMTP_PASS=production_app_password
+ADMIN_EMAIL=admin@bongflavours.com
+
+# Production URL
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+```
+
+### Build and Deploy
+
+```bash
+npm run build
+npm start
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Authentication Not Working**:
+
+   - Verify JWT_SECRET is set
+   - Check MongoDB connection
+   - Clear browser localStorage and cookies
+
+2. **PDF Generation Fails**:
+
+   - Ensure Chrome/Chromium is installed
+   - Check Puppeteer configuration
+   - Verify sufficient system memory
+
+3. **Emails Not Sending**:
+
+   - Verify SMTP credentials
+   - Check Gmail app password configuration
+   - Ensure network connectivity
+
+4. **Database Connection Issues**:
+   - Verify MongoDB URI format
+   - Check network access in MongoDB Atlas
+   - Ensure database user permissions
+
+### Debug Mode
+
+Enable detailed logging by setting:
+
+```env
+NODE_ENV=development
+```
+
+## 📱 Browser Compatibility
+
+- **Chrome/Chromium**: Full functionality
+- **Firefox**: Full functionality
+- **Safari**: Full functionality
+- **VS Code Simple Browser**: Full functionality with Bearer token authentication
+- **Mobile browsers**: Responsive design optimized
+
+## 🔧 Development Tools
+
+### Recommended VS Code Extensions
+
+- ES7+ React/Redux/React-Native snippets
+- Tailwind CSS IntelliSense
+- MongoDB for VS Code
+- Thunder Client (API testing)
+
+### Testing APIs
+
+Use the included Postman collection or Thunder Client to test API endpoints:
+
+- Authentication endpoints
+- Order creation and management
+- Profile updates
+- Admin functionality
+
+## 📈 Performance Optimizations
+
+- **Next.js App Router**: Optimized routing and caching
+- **MongoDB Indexing**: Efficient database queries
+- **Image Optimization**: Next.js automatic image optimization
+- **Lazy Loading**: Components loaded on demand
+- **PDF Caching**: Generated PDFs cached for performance
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🍛 About Bong Flavours
+
+Bong Flavours is a tribute to authentic Bengali cuisine, bringing the rich flavors and traditions of Bengal to your table through modern e-commerce technology.
+
+---
+
+**For technical support or questions, please contact the development team or create an issue in the repository.**
 
 ## 🌟 Features
 

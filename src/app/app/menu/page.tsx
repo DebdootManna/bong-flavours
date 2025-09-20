@@ -11,6 +11,10 @@ interface MenuItem {
   name: string
   description: string
   price: number
+  variants?: Array<{
+    name: string
+    price: number
+  }>
   category: string
   isVeg: boolean
   isAvailable: boolean
@@ -23,10 +27,11 @@ const AuthenticatedMenuPage = () => {
   const router = useRouter()
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
-  const [showVegOnly, setShowVegOnly] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [showVegOnly, setShowVegOnly] = useState<boolean>(false)
+  const [selectedVariants, setSelectedVariants] = useState<{[itemId: string]: number}>({}) // Track selected variant index for each item
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -78,26 +83,39 @@ const AuthenticatedMenuPage = () => {
     return true
   })
 
-  const getItemQuantityInCart = (itemId: string) => {
-    const cartItem = state.items.find(item => item.id === itemId)
+  const getItemQuantityInCart = (itemId: string, variantIndex?: number) => {
+    const cartItemId = itemId + (variantIndex !== undefined ? `-variant-${variantIndex}` : '')
+    const cartItem = state.items.find(item => item.id === cartItemId)
     return cartItem ? cartItem.quantity : 0
   }
 
-  const handleAddToCart = (item: MenuItem) => {
+  const handleAddToCart = (item: MenuItem, variantIndex?: number) => {
+    const selectedVariantIndex = variantIndex ?? selectedVariants[item._id] ?? 0
+    const price = item.variants && item.variants.length > selectedVariantIndex 
+      ? item.variants[selectedVariantIndex].price 
+      : item.price
+    
+    const variantName = item.variants && item.variants.length > selectedVariantIndex
+      ? item.variants[selectedVariantIndex].name
+      : undefined
+
     addToCart({
-      id: item._id,
+      id: item._id + (variantIndex !== undefined ? `-variant-${variantIndex}` : ''),
       menuItem: item._id,
-      name: item.name,
-      price: item.price,
-      quantity: 1
+      name: item.name + (variantName ? ` (${variantName})` : ''),
+      price: price,
+      quantity: 1,
+      variantIndex: variantIndex,
+      variantName: variantName
     })
   }
 
-  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
+  const handleUpdateQuantity = (itemId: string, newQuantity: number, variantIndex?: number) => {
+    const cartItemId = itemId + (variantIndex !== undefined ? `-variant-${variantIndex}` : '')
     if (newQuantity === 0) {
-      removeFromCart(itemId, undefined)
+      removeFromCart(cartItemId, variantIndex)
     } else {
-      updateQuantity(itemId, undefined, newQuantity)
+      updateQuantity(cartItemId, variantIndex, newQuantity)
     }
   }
 
@@ -229,7 +247,11 @@ const AuthenticatedMenuPage = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredItems.map((item) => {
-              const quantityInCart = getItemQuantityInCart(item._id)
+              const selectedVariantIndex = selectedVariants[item._id] ?? 0
+              const displayPrice = item.variants && item.variants.length > 0
+                ? item.variants[selectedVariantIndex]?.price ?? item.price
+                : item.price
+              const quantityInCart = getItemQuantityInCart(item._id, item.variants ? selectedVariantIndex : undefined)
               
               return (
                 <div key={item._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -251,9 +273,30 @@ const AuthenticatedMenuPage = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* Variant Selection */}
+                    {item.variants && item.variants.length > 0 && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Size/Variant:</label>
+                        <select
+                          value={selectedVariantIndex}
+                          onChange={(e) => setSelectedVariants(prev => ({
+                            ...prev,
+                            [item._id]: parseInt(e.target.value)
+                          }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6F1D1B]"
+                        >
+                          {item.variants.map((variant, index) => (
+                            <option key={index} value={index}>
+                              {variant.name} - ₹{variant.price}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                     
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-xl font-bold text-[#6F1D1B]">₹{item.price}</span>
+                      <span className="text-xl font-bold text-[#6F1D1B]">₹{displayPrice}</span>
                       <div className="text-sm">
                         {item.isAvailable ? (
                           <span className="text-green-600 font-medium">Available</span>
@@ -273,7 +316,7 @@ const AuthenticatedMenuPage = () => {
                       </button>
                     ) : quantityInCart === 0 ? (
                       <button
-                        onClick={() => handleAddToCart(item)}
+                        onClick={() => handleAddToCart(item, item.variants ? selectedVariantIndex : undefined)}
                         className="w-full bg-[#6F1D1B] text-white py-2 px-4 rounded-md hover:bg-[#432818] transition-colors font-medium"
                       >
                         Add to Cart
@@ -281,14 +324,14 @@ const AuthenticatedMenuPage = () => {
                     ) : (
                       <div className="flex items-center justify-between bg-[#6F1D1B] text-white rounded-md">
                         <button
-                          onClick={() => handleUpdateQuantity(item._id, quantityInCart - 1)}
+                          onClick={() => handleUpdateQuantity(item._id, quantityInCart - 1, item.variants ? selectedVariantIndex : undefined)}
                           className="px-4 py-2 hover:bg-[#432818] rounded-l-md transition-colors"
                         >
                           -
                         </button>
                         <span className="px-4 py-2 font-medium">{quantityInCart}</span>
                         <button
-                          onClick={() => handleUpdateQuantity(item._id, quantityInCart + 1)}
+                          onClick={() => handleUpdateQuantity(item._id, quantityInCart + 1, item.variants ? selectedVariantIndex : undefined)}
                           className="px-4 py-2 hover:bg-[#432818] rounded-r-md transition-colors"
                         >
                           +

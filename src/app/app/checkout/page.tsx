@@ -22,9 +22,9 @@ const CheckoutPage = () => {
   const router = useRouter()
 
   const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo>({
-    fullName: user?.name || '',
+    fullName: '',
     phone: '',
-    email: user?.email || '',
+    email: '',
     address: '',
     city: '',
     pincode: '',
@@ -35,6 +35,62 @@ const CheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'online'>('cash')
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Partial<DeliveryInfo>>({})
+
+  // Fetch user profile data and auto-populate form
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) return
+
+      try {
+        // Get token from localStorage
+        const token = localStorage.getItem('auth-token')
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json'
+        }
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`
+        }
+        
+        const response = await fetch('/api/auth/profile-v2', {
+          headers,
+          credentials: 'include'
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          // Auto-populate form with saved profile data
+          setDeliveryInfo({
+            fullName: data.user.name || user.name || '',
+            phone: data.user.phone || '',
+            email: data.user.email || user.email || '',
+            address: data.user.address || '',
+            city: data.user.city || '',
+            pincode: data.user.zipCode || '',
+            landmark: '',
+            specialInstructions: ''
+          })
+        } else {
+          // Fallback to basic user data from auth context
+          setDeliveryInfo(prev => ({
+            ...prev,
+            fullName: user.name || '',
+            email: user.email || ''
+          }))
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+        // Fallback to basic user data from auth context
+        setDeliveryInfo(prev => ({
+          ...prev,
+          fullName: user.name || '',
+          email: user.email || ''
+        }))
+      }
+    }
+
+    fetchUserProfile()
+  }, [user])
 
   // Calculate pricing breakdown
   const subtotal = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
