@@ -1,14 +1,37 @@
 import type { Metadata } from 'next'
-import { Gupter } from 'next/font/google'
+import { Gupter, Instrument_Sans, Poppins, Albert_Sans, Prata } from 'next/font/google'
 import './globals.css'
 import LenisProvider from '@/components/LenisProvider'
 import { CartProvider } from '@/contexts/CartContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 
-const gupter = Gupter({ 
+const gupter = Gupter({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
   variable: '--font-gupter'
+})
+
+const instrumentSans = Instrument_Sans({
+  subsets: ['latin'],
+  variable: '--font-instrument-sans'
+})
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-poppins'
+})
+
+const albertSans = Albert_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700', '800'],
+  variable: '--font-albert-sans'
+})
+
+const prata = Prata({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-prata'
 })
 
 export const metadata: Metadata = {
@@ -30,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={gupter.variable}>
+    <html lang="en" className={`${gupter.variable} ${instrumentSans.variable} ${poppins.variable} ${albertSans.variable} ${prata.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

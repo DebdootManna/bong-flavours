@@ -19,6 +19,10 @@ const config: Config = {
       },
       fontFamily: {
         gupter: ['Gupter', 'serif'],
+        'instrument-sans': ['var(--font-instrument-sans)', 'sans-serif'],
+        'poppins': ['var(--font-poppins)', 'sans-serif'],
+        'albert-sans': ['var(--font-albert-sans)', 'sans-serif'],
+        'prata': ['var(--font-prata)', 'serif'],
       },
       animation: {
         fadeIn: 'fadeIn 0.6s ease-in-out',
