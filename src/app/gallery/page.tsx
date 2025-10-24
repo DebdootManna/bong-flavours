@@ -44,20 +44,12 @@ export default function GalleryPage() {
         {/* Auth Buttons */}
         <div className="flex items-center gap-4 md:gap-9 border border-white rounded-[33px] px-3 md:px-4 py-1.5 md:py-2">
           {user ? (
-            <>
-              <Link
-                href="/app/profile"
-                className="text-white text-center underline hover:text-[#BB9457] transition-colors text-sm md:text-xl"
-              >
-                Profile
-              </Link>
-              <button
-                onClick={logout}
-                className="text-white text-center underline hover:text-[#BB9457] transition-colors text-sm md:text-xl"
-              >
-                Logout
-              </button>
-            </>
+            <Link
+              href="/app/profile"
+              className="text-white text-center underline hover:text-[#BB9457] transition-colors text-sm md:text-xl"
+            >
+              View Profile
+            </Link>
           ) : (
             <>
               <Link

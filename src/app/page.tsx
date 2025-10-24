@@ -153,29 +153,19 @@ export default function Home() {
       {/* About Section */}
       <section className="relative py-20 px-6 md:px-12 bg-black overflow-hidden">
         <div className="absolute inset-0 opacity-50">
-          <img
-            src="https://api.builder.io/api/v1/image/assets/TEMP/f91e990d022998aba3a76e9b86e0bf26387c82ff?width=3096"
-            alt="Background"
+          <video
+            src="/video/hero.mov"
+            autoPlay
+            loop
+            muted
+            playsInline
             className="w-full h-full object-cover"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
 
         <div className="relative z-10 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-          <div className="lg:w-1/2">
-            <div className="relative">
-              <img
-                src="https://api.builder.io/api/v1/image/assets/TEMP/96c8516cc5075aaf5b21beebd92cd21a7fdd507a?width=320"
-                alt="Quote decoration"
-                className="absolute -top-8 -left-8 w-12 h-12"
-              />
-              <img
-                src="https://api.builder.io/api/v1/image/assets/TEMP/acf3fa249d4a768b615d042725807dbd32eb38b5?width=64"
-                alt="Quote"
-                className="w-8 h-8 mb-4"
-              />
-            </div>
-          </div>
+          <div className="lg:w-1/2"></div>
 
           <div className="lg:w-1/2 text-center lg:text-left">
             <p className="text-white text-xl md:text-2xl leading-relaxed font-albert-sans mb-8">
