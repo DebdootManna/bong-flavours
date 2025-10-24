@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -35,6 +35,8 @@ const CheckoutPage = () => {
 
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [profileLoadSuccess, setProfileLoadSuccess] = useState(false);
   const [errors, setErrors] = useState<Partial<DeliveryInfo>>({});
 
   // Calculate totals
@@ -48,55 +50,61 @@ const CheckoutPage = () => {
   const total = subtotal + tax + deliveryFee;
 
   // Fetch user profile data and auto-populate form
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!user) return;
+  const fetchUserProfile = useCallback(async () => {
+    if (!user) return;
 
-      try {
-        const token = localStorage.getItem("auth-token");
-        const headers: HeadersInit = {
-          "Content-Type": "application/json",
-        };
+    setIsLoadingProfile(true);
+    try {
+      const token = localStorage.getItem("auth-token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
 
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
 
-        const response = await fetch("/api/auth/profile-v2", {
-          headers,
-          credentials: "include",
-        });
+      const response = await fetch("/api/auth/profile-v2", {
+        headers,
+        credentials: "include",
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          setDeliveryInfo((prev) => ({
-            ...prev,
-            fullName: data.name || "",
-            email: data.email || "",
-            phone: data.phone || "",
-            address: data.address || "",
-            city: data.city || "",
-            pincode: data.zipCode || "",
-          }));
-        } else {
-          setDeliveryInfo((prev) => ({
-            ...prev,
-            fullName: user.name || "",
-            email: user.email || "",
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+      if (response.ok) {
+        const data = await response.json();
+        setDeliveryInfo((prev) => ({
+          ...prev,
+          fullName: data.user.name || "",
+          email: data.user.email || "",
+          phone: data.user.phone || "",
+          address: data.user.address || "",
+          city: data.user.city || "",
+          pincode: data.user.zipCode || "",
+        }));
+        setProfileLoadSuccess(true);
+        setTimeout(() => setProfileLoadSuccess(false), 3000);
+      } else {
+        console.warn("Failed to fetch profile, using basic user info");
         setDeliveryInfo((prev) => ({
           ...prev,
           fullName: user.name || "",
           email: user.email || "",
         }));
       }
-    };
-
-    fetchUserProfile();
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setDeliveryInfo((prev) => ({
+        ...prev,
+        fullName: user.name || "",
+        email: user.email || "",
+      }));
+    } finally {
+      setIsLoadingProfile(false);
+    }
   }, [user]);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
 
   const validateForm = () => {
     const newErrors: Partial<DeliveryInfo> = {};
@@ -301,6 +309,55 @@ const CheckoutPage = () => {
                 Delivery Information
               </h2>
 
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="text-sm text-[#6F1D1B]">
+                    Your saved information is auto-filled below
+                  </div>
+                  <button
+                    type="button"
+                    onClick={fetchUserProfile}
+                    disabled={isLoadingProfile}
+                    className="text-sm text-[#6F1D1B] underline hover:opacity-70 disabled:opacity-50"
+                  >
+                    {isLoadingProfile ? "Loading..." : "Refresh Info"}
+                  </button>
+                </div>
+                <div className="text-xs text-gray-600">
+                  Missing information? Update your profile in the{" "}
+                  <button
+                    type="button"
+                    onClick={() => router.push("/app/profile")}
+                    className="text-[#6F1D1B] underline hover:opacity-70"
+                  >
+                    user dashboard
+                  </button>{" "}
+                  and refresh this page.
+                </div>
+              </div>
+
+              {isLoadingProfile && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#6F1D1B] mr-2"></div>
+                    <span className="text-[#6F1D1B] text-sm">
+                      Loading your saved information...
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {profileLoadSuccess && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div className="flex items-center">
+                    <div className="text-green-600 mr-2">✓</div>
+                    <span className="text-green-700 text-sm">
+                      Your saved information has been loaded successfully!
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -316,6 +373,7 @@ const CheckoutPage = () => {
                       onChange={(e) =>
                         handleInputChange("fullName", e.target.value)
                       }
+                      placeholder="Enter your full name"
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white text-[#6F1D1B] ${
                         errors.fullName
                           ? "border-red-500 focus:ring-red-200"
@@ -346,6 +404,7 @@ const CheckoutPage = () => {
                       onChange={(e) =>
                         handleInputChange("phone", e.target.value)
                       }
+                      placeholder="10-digit mobile number"
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white text-[#6F1D1B] ${
                         errors.phone
                           ? "border-red-500 focus:ring-red-200"
@@ -375,6 +434,7 @@ const CheckoutPage = () => {
                     type="email"
                     value={deliveryInfo.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
+                    placeholder="your.email@example.com"
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white text-[#6F1D1B] ${
                       errors.email
                         ? "border-red-500 focus:ring-red-200"
@@ -404,6 +464,7 @@ const CheckoutPage = () => {
                     onChange={(e) =>
                       handleInputChange("address", e.target.value)
                     }
+                    placeholder="Enter your complete delivery address"
                     rows={3}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white text-[#6F1D1B] ${
                       errors.address
@@ -436,6 +497,7 @@ const CheckoutPage = () => {
                       onChange={(e) =>
                         handleInputChange("city", e.target.value)
                       }
+                      placeholder="Enter your city"
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white text-[#6F1D1B] ${
                         errors.city
                           ? "border-red-500 focus:ring-red-200"
@@ -466,6 +528,7 @@ const CheckoutPage = () => {
                       onChange={(e) =>
                         handleInputChange("pincode", e.target.value)
                       }
+                      placeholder="6-digit PIN code"
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white text-[#6F1D1B] ${
                         errors.pincode
                           ? "border-red-500 focus:ring-red-200"
@@ -497,6 +560,7 @@ const CheckoutPage = () => {
                     onChange={(e) =>
                       handleInputChange("landmark", e.target.value)
                     }
+                    placeholder="Nearby landmark (optional)"
                     className="w-full px-3 py-2 border border-[#6F1D1B] rounded-md focus:outline-none focus:ring-2 focus:ring-[#6F1D1B] bg-white text-[#6F1D1B]"
                     style={{ fontFamily: "serif", fontSize: "16px" }}
                   />
