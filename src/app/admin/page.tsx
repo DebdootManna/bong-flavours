@@ -3,6 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+interface Toast {
+  id: string;
+  message: string;
+  type: "success" | "error" | "info";
+}
+
 interface User {
   _id: string;
   name: string;
@@ -50,6 +56,10 @@ export default function AdminDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userActionLoading, setUserActionLoading] = useState<string | null>(
+    null,
+  );
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalOrders: 0,
@@ -57,32 +67,6 @@ export default function AdminDashboard() {
     totalRevenue: 0,
   });
   const router = useRouter();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/auth/me");
-        if (response.ok) {
-          const userData = await response.json();
-          if (userData.user.role === "admin") {
-            setUser(userData.user);
-            await fetchDashboardData();
-          } else {
-            router.push("/login");
-          }
-        } else {
-          router.push("/login");
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        router.push("/login");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
 
   const fetchDashboardData = async () => {
     try {
@@ -118,6 +102,70 @@ export default function AdminDashboard() {
     }
   };
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/me");
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData.user.role === "admin") {
+            setUser(userData.user);
+            // Inline dashboard data fetch to avoid dependency warning
+            try {
+              const [usersRes, ordersRes, bookingsRes, dashboardRes] =
+                await Promise.all([
+                  fetch("/api/admin/users"),
+                  fetch("/api/admin/orders"),
+                  fetch("/api/admin/bookings"),
+                  fetch("/api/admin/dashboard"),
+                ]);
+
+              if (usersRes.ok) {
+                const usersData = await usersRes.json();
+                setUsers(usersData.users || []);
+              }
+
+              if (ordersRes.ok) {
+                const ordersData = await ordersRes.json();
+                setOrders(ordersData.orders || []);
+              }
+
+              if (bookingsRes.ok) {
+                const bookingsData = await bookingsRes.json();
+                setBookings(bookingsData.bookings || []);
+              }
+
+              if (dashboardRes.ok) {
+                const dashboardData = await dashboardRes.json();
+                setStats(
+                  dashboardData.stats || {
+                    totalUsers: 0,
+                    totalOrders: 0,
+                    totalBookings: 0,
+                    totalRevenue: 0,
+                  },
+                );
+              }
+            } catch (error) {
+              console.error("Failed to fetch dashboard data:", error);
+            }
+          } else {
+            router.push("/login");
+          }
+        } else {
+          router.push("/login");
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        router.push("/login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
   const refreshData = () => {
     fetchDashboardData();
   };
@@ -151,13 +199,11 @@ export default function AdminDashboard() {
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
-      const headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
-
       const response = await fetch(`/api/bookings/${bookingId}`, {
         method: "PATCH",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ status }),
       });
 
@@ -166,6 +212,94 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Failed to update booking status:", error);
+    }
+  };
+
+  const showToast = (message: string, type: "success" | "error" | "info") => {
+    const id = Date.now().toString();
+    const newToast: Toast = { id, message, type };
+    setToasts((prev) => [...prev, newToast]);
+
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
+
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    if (userId === user?._id) {
+      alert("You cannot change your own role!");
+      return;
+    }
+
+    if (
+      confirm(`Are you sure you want to change this user's role to ${newRole}?`)
+    ) {
+      setUserActionLoading(userId);
+      try {
+        const response = await fetch("/api/admin/users", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, role: newRole }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          showToast(data.message, "success");
+          await fetchDashboardData(); // Refresh the users list
+        } else {
+          const errorData = await response.json();
+          showToast(`Error: ${errorData.message}`, "error");
+        }
+      } catch (error) {
+        console.error("Failed to update user role:", error);
+        showToast("Failed to update user role. Please try again.", "error");
+      } finally {
+        setUserActionLoading(null);
+      }
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (userId === user?._id) {
+      alert("You cannot delete your own account!");
+      return;
+    }
+
+    if (
+      confirm(
+        `Are you sure you want to delete user "${userName}"? This action cannot be undone.`,
+      )
+    ) {
+      setUserActionLoading(userId);
+      try {
+        const response = await fetch("/api/admin/users", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          showToast(data.message, "success");
+          await fetchDashboardData(); // Refresh the users list
+        } else {
+          const errorData = await response.json();
+          showToast(`Error: ${errorData.message}`, "error");
+        }
+      } catch (error) {
+        console.error("Failed to delete user:", error);
+        showToast("Failed to delete user. Please try again.", "error");
+      } finally {
+        setUserActionLoading(null);
+      }
     }
   };
 
@@ -187,6 +321,65 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#6F1D1B" }}>
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden ${
+              toast.type === "success"
+                ? "bg-green-50 border-green-200"
+                : toast.type === "error"
+                  ? "bg-red-50 border-red-200"
+                  : "bg-blue-50 border-blue-200"
+            }`}
+          >
+            <div className="p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  {toast.type === "success" && (
+                    <div className="text-green-400">✓</div>
+                  )}
+                  {toast.type === "error" && (
+                    <div className="text-red-400">✗</div>
+                  )}
+                  {toast.type === "info" && (
+                    <div className="text-blue-400">ℹ</div>
+                  )}
+                </div>
+                <div className="ml-3 w-0 flex-1 pt-0.5">
+                  <p
+                    className={`text-sm font-medium ${
+                      toast.type === "success"
+                        ? "text-green-900"
+                        : toast.type === "error"
+                          ? "text-red-900"
+                          : "text-blue-900"
+                    }`}
+                  >
+                    {toast.message}
+                  </p>
+                </div>
+                <div className="ml-4 flex-shrink-0 flex">
+                  <button
+                    onClick={() => removeToast(toast.id)}
+                    className={`inline-flex rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      toast.type === "success"
+                        ? "text-green-500 hover:text-green-600 focus:ring-green-500"
+                        : toast.type === "error"
+                          ? "text-red-500 hover:text-red-600 focus:ring-red-500"
+                          : "text-blue-500 hover:text-blue-600 focus:ring-blue-500"
+                    }`}
+                  >
+                    <span className="sr-only">Close</span>✕
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Header */}
       <header className="shadow" style={{ backgroundColor: "#FFE6A7" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -308,36 +501,98 @@ export default function AdminDashboard() {
                         <th className="px-6 py-3 text-left font-heading text-sm font-bold text-[#FFE6A7] uppercase tracking-wider">
                           Joined
                         </th>
+                        <th className="px-6 py-3 text-left font-heading text-sm font-bold text-[#FFE6A7] uppercase tracking-wider">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="bg-[#FFE6A7] divide-y divide-[#6F1D1B]">
-                      {users.map((user) => (
-                        <tr key={user._id}>
-                          <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
-                            {user.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
-                            {user.email}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
-                            {user.phone}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                user.role === "admin"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-green-100 text-green-800"
-                              }`}
-                            >
-                              {user.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
-                            {new Date(user.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
+                      {users.map((currentUser) => {
+                        const isCurrentAdmin = currentUser._id === user?._id;
+                        const isLoading = userActionLoading === currentUser._id;
+
+                        return (
+                          <tr key={currentUser._id}>
+                            <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
+                              {currentUser.name}
+                              {isCurrentAdmin && (
+                                <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                  You
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
+                              {currentUser.email}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
+                              {currentUser.phone}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  currentUser.role === "admin"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-green-100 text-green-800"
+                                }`}
+                              >
+                                {currentUser.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-body text-base text-[#6F1D1B]">
+                              {new Date(
+                                currentUser.createdAt,
+                              ).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <div className="flex space-x-2">
+                                {!isCurrentAdmin && (
+                                  <>
+                                    <button
+                                      onClick={() =>
+                                        handleRoleChange(
+                                          currentUser._id,
+                                          currentUser.role === "admin"
+                                            ? "customer"
+                                            : "admin",
+                                        )
+                                      }
+                                      disabled={isLoading}
+                                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                                        currentUser.role === "admin"
+                                          ? "bg-green-100 text-green-800 hover:bg-green-200"
+                                          : "bg-red-100 text-red-800 hover:bg-red-200"
+                                      } disabled:opacity-50`}
+                                    >
+                                      {isLoading
+                                        ? "..."
+                                        : currentUser.role === "admin"
+                                          ? "Make Customer"
+                                          : "Make Admin"}
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleDeleteUser(
+                                          currentUser._id,
+                                          currentUser.name,
+                                        )
+                                      }
+                                      disabled={isLoading}
+                                      className="px-3 py-1 bg-red-600 text-white rounded text-xs font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                                    >
+                                      {isLoading ? "..." : "Delete"}
+                                    </button>
+                                  </>
+                                )}
+                                {isCurrentAdmin && (
+                                  <span className="text-xs text-gray-500 italic">
+                                    Cannot modify your own account
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
