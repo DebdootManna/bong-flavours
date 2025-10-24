@@ -217,15 +217,15 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-black/40 rounded-lg overflow-hidden"
+                  className="bg-black/40 rounded-lg overflow-hidden flex flex-col h-full"
                 >
                   <img
                     src={item.image}
                     alt={item.name}
                     className="w-full aspect-square object-cover"
                   />
-                  <div className="p-6 text-center">
-                    <h3 className="text-[#F2F3AE] text-xl font-poppins uppercase tracking-wide mb-2">
+                  <div className="p-6 text-center flex flex-col flex-grow">
+                    <h3 className="text-[#F2F3AE] text-xl font-poppins uppercase tracking-wide mb-2 flex-grow">
                       {item.name}
                     </h3>
                     <p className="text-[#A44200] text-lg font-bold font-poppins mb-4">
