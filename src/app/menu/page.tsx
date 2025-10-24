@@ -435,11 +435,11 @@ export default function MenuPage() {
               <Link href="/menu" className="hover:text-[#D22020]">
                 Menu
               </Link>
-              <Link href="/wines" className="hover:text-[#D22020]">
-                Wines
+              <Link href="/gallery" className="hover:text-[#D22020]">
+                Gallery
               </Link>
-              <Link href="/christmas" className="hover:text-[#D22020]">
-                Christmas Dinner
+              <Link href="/booking" className="hover:text-[#D22020]">
+                Booking
               </Link>
             </div>
           </div>
