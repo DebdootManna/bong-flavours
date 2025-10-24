@@ -30,7 +30,7 @@ export default function MenuPage() {
       title: "Bengali Starters",
       imagePosition: "left",
       sectionImage:
-        "https://api.builder.io/api/v1/image/assets/TEMP/ad3077ce26008547ddd77e39f9c3d1a7645a35d4?width=800",
+        "https://images.pexels.com/photos/17321008/pexels-photo-17321008.jpeg",
       items: [
         {
           name: "VEG CHOP (2PCS)",
@@ -38,7 +38,7 @@ export default function MenuPage() {
             "Traditional Bengali vegetable cutlets with a crispy exterior and spiced vegetable filling.",
           price: "₹80",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/422df1958dd42a273898b16dc7d78ca333b9e1c7?width=150",
+            "https://i.pinimg.com/736x/7c/ae/78/7cae78ba8bd6a5a5d833bae8620195c8.jpg",
         },
         {
           name: "BEGUNI (2PCS)",
@@ -46,7 +46,7 @@ export default function MenuPage() {
             "Golden fried eggplant fritters, a classic Bengali tea-time snack.",
           price: "₹50",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/4d79f9abe682a889332b1439bb871c07a0aa9065?width=150",
+            "https://i.pinimg.com/736x/92/e5/f7/92e5f707f15f7cc93e6a37003bba0946.jpg",
         },
         {
           name: "FISH CUTLET (1PC)",
@@ -54,7 +54,7 @@ export default function MenuPage() {
             "Crispy fish cutlet made with fresh fish and aromatic Bengali spices.",
           price: "₹70",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/5904f8807a18837d49d010edcac231ada87c28bd?width=150",
+            "https://i.pinimg.com/736x/6b/f6/ba/6bf6ba77f4f6616b284a25c3bb7aa2df.jpg",
         },
         {
           name: "EGG DEVIL (2PCS)",
@@ -62,7 +62,7 @@ export default function MenuPage() {
             "Spiced egg preparation with a fiery kick, perfect for egg lovers.",
           price: "₹90",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/4dbb66b59be35bbde58be203c604dbc940c010ab?width=150",
+            "https://i.pinimg.com/1200x/2b/34/d4/2b34d4f51a418aeddf1b42d3661f9a8d.jpg",
         },
       ],
     },
@@ -70,12 +70,12 @@ export default function MenuPage() {
       title: "Kolkata Biryani",
       imagePosition: "right",
       sectionImage:
-        "https://api.builder.io/api/v1/image/assets/TEMP/d12904c8afa5f62fe8c4d325d25b9d3288aa5284?width=800",
+        "https://i.pinimg.com/1200x/9a/f7/20/9af7209777420db1e41f25f9e25cbe32.jpg",
       items: [
         {
           name: "KOLKATA STYLE EGG DUM BIRYANI",
           description:
-            "Aromatic basmati rice with perfectly cooked eggs, aloo, and signature Kolkata biryani spices.",
+            "https://i.pinimg.com/1200x/92/48/d2/9248d2de57951839856b5166785d8453.jpg",
           price: "₹250",
           image:
             "https://api.builder.io/api/v1/image/assets/TEMP/efcf97bc058b9ec0abb1c6ab3a3ff69aac8bef32?width=150",
@@ -86,7 +86,7 @@ export default function MenuPage() {
             "Traditional Kolkata biryani with tender chicken, aloo, egg, and fragrant rice.",
           price: "₹280",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/8db2d5581152a7c3231c7393690835cd4da13c0d?width=150",
+            "https://i.pinimg.com/1200x/6c/98/c3/6c98c3b443c58108eda2300a2dbdf59a.jpg",
         },
         {
           name: "KOLKATA STYLE MUTTON DUM BIRYANI",
@@ -94,7 +94,7 @@ export default function MenuPage() {
             "Rich and flavorful mutton biryani with tender meat, aloo, egg, and aromatic rice.",
           price: "₹400",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/73dbb9c2e09afda9aeac4ca14fac3a702d8b4fc0?width=150",
+            "https://i.pinimg.com/1200x/9b/02/34/9b02345160f2a6bf0aab123931a63b85.jpg",
         },
         {
           name: "SPECIAL CHICKEN DUM BIRYANI",
@@ -102,7 +102,7 @@ export default function MenuPage() {
             "Special serving with 2 aloo, 2 eggs, 2 chicken pieces, served with rayta.",
           price: "₹610",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/d533aad74532cbfccf9bf33948d9d58ced8a0f9d?width=150",
+            "https://i.pinimg.com/1200x/da/25/92/da2592e0d25f079cbf9aedf436cabf6f.jpg",
         },
       ],
     },
@@ -110,7 +110,7 @@ export default function MenuPage() {
       title: "Bengali Main Course",
       imagePosition: "left",
       sectionImage:
-        "https://api.builder.io/api/v1/image/assets/TEMP/b09140ea039e2b64d4efd8e738f37bef35c046e6?width=800",
+        "https://i.pinimg.com/1200x/b9/83/ad/b983adb243491eb169fdfd389d89da14.jpg",
       items: [
         {
           name: "FISH CURRY (2PCS)",
@@ -118,7 +118,7 @@ export default function MenuPage() {
             "Traditional Bengali fish curry with fresh fish pieces in aromatic mustard-based gravy.",
           price: "₹270",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/1b0559b79ff74c4fd6aa49d98fe2ce0285afb40f?width=150",
+            "https://i.pinimg.com/736x/bc/32/9a/bc329afa19cfcc49250fdde8774fed1d.jpg",
         },
         {
           name: "FISH IN MUSTARD GRAVY (2PCS)",
@@ -126,7 +126,7 @@ export default function MenuPage() {
             "Fresh fish cooked in traditional Bengali mustard sauce with green chilies.",
           price: "₹360",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/b3e5c2b7e5ea5d3a3a4d5b5c6d7e8f9a0b1c2d3e?width=150",
+            "https://i.pinimg.com/736x/fe/97/b1/fe97b18330880b1a2bf2552aab79c72d.jpg",
         },
         {
           name: "DOI MACH (2PCS)",
@@ -134,7 +134,7 @@ export default function MenuPage() {
             "Fish cooked in creamy yogurt gravy with authentic Bengali spices.",
           price: "₹380",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/e6f7d5c4b3a2918e7d6c5b4a3928f1e0d9c8b7a6?width=150",
+            "https://i.pinimg.com/1200x/40/a7/be/40a7be8ef76d4be4dc8c9b33de10b5b3.jpg",
         },
         {
           name: "PRAWN MALAI CURRY",
@@ -142,7 +142,7 @@ export default function MenuPage() {
             "Succulent prawns in rich coconut milk curry, a Bengali delicacy.",
           price: "₹420",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0?width=150",
+            "https://i.pinimg.com/1200x/5d/53/ea/5d53ea751ce097326cfe7ff565694f99.jpg",
         },
       ],
     },
@@ -150,7 +150,7 @@ export default function MenuPage() {
       title: "Kolkata Chinese",
       imagePosition: "right",
       sectionImage:
-        "https://api.builder.io/api/v1/image/assets/TEMP/a1b64ea749c2716cfb7e2f0b7e88cc321b2e3adc?width=800",
+        "https://i.pinimg.com/736x/03/f4/a1/03f4a143fea0dce73901c45b93f1527b.jpg",
       items: [
         {
           name: "VEG HAKKA NOODLES",
@@ -158,7 +158,7 @@ export default function MenuPage() {
             "Stir-fried noodles with fresh vegetables in authentic Kolkata Chinese style.",
           price: "₹200",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/504e5e20aadf910fd3293446dc5e16d818745a7d?width=150",
+            "https://i.pinimg.com/736x/e5/53/63/e55363cd63ec1f769a184d8617a832ef.jpg",
         },
         {
           name: "VEG FRIED RICE",
@@ -166,7 +166,7 @@ export default function MenuPage() {
             "Wok-tossed rice with mixed vegetables and soy sauce, Kolkata street food favorite.",
           price: "₹200",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/66192ccbf6b95ae818de63ee5f06ee699a3abcd8?width=150",
+            "https://i.pinimg.com/736x/86/f5/ab/86f5ab1bd8492d9786bb23773dfe74c1.jpg",
         },
         {
           name: "PANEER CHILLY GRAVY (6PCS)",
@@ -174,7 +174,7 @@ export default function MenuPage() {
             "Cottage cheese cubes in spicy Indo-Chinese gravy with bell peppers.",
           price: "₹290",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/a2eb88db5dd6a2ae46336f7ff4f68330177616ef?width=150",
+            "https://i.pinimg.com/736x/bd/d2/cf/bdd2cf973419568da097ed78072c43d2.jpg",
         },
         {
           name: "CHICKEN CHILLY DRY",
@@ -182,7 +182,7 @@ export default function MenuPage() {
             "Crispy chicken pieces tossed with onions and peppers in Indo-Chinese sauce.",
           price: "₹320",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/8bc4af53f912d078a2ab157db041bf4c8430b28b?width=150",
+            "https://i.pinimg.com/1200x/d9/07/48/d9074804d231fa82a213956c1157c52e.jpg",
         },
       ],
     },
@@ -190,7 +190,7 @@ export default function MenuPage() {
       title: "Kolkata Kathi Rolls",
       imagePosition: "left",
       sectionImage:
-        "https://api.builder.io/api/v1/image/assets/TEMP/b09140ea039e2b64d4efd8e738f37bef35c046e6?width=800",
+        "https://i.pinimg.com/1200x/24/40/a4/2440a4faf473140055eb5734b76fcaa9.jpg",
       items: [
         {
           name: "VEG KATHI ROLL",
@@ -198,7 +198,7 @@ export default function MenuPage() {
             "Fresh vegetables wrapped in soft paratha with tangy sauces and chutneys.",
           price: "₹110",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/1b0559b79ff74c4fd6aa49d98fe2ce0285afb40f?width=150",
+            "https://i.pinimg.com/1200x/68/5c/14/685c14c823f361e2daf0f5ec7848f136.jpg",
         },
         {
           name: "EGG KATHI ROLL",
@@ -206,7 +206,7 @@ export default function MenuPage() {
             "Scrambled eggs wrapped in paratha with onions and green chilies, Kolkata style.",
           price: "₹99",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/b3e5c2b7e5ea5d3a3a4d5b5c6d7e8f9a0b1c2d3e?width=150",
+            "https://i.pinimg.com/1200x/9e/f4/53/9ef453aa928152d584a2444d0e3c1968.jpg",
         },
         {
           name: "CHICKEN KATHI ROLL",
@@ -214,7 +214,7 @@ export default function MenuPage() {
             "Tender chicken pieces with onions and spices wrapped in soft paratha.",
           price: "₹140",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/e6f7d5c4b3a2918e7d6c5b4a3928f1e0d9c8b7a6?width=150",
+            "https://i.pinimg.com/736x/50/3f/13/503f13f2ef189e852844508200a328df.jpg",
         },
         {
           name: "MUTTON KATHI ROLL",
@@ -222,7 +222,7 @@ export default function MenuPage() {
             "Succulent mutton pieces with aromatic spices wrapped in fresh paratha.",
           price: "₹180",
           image:
-            "https://api.builder.io/api/v1/image/assets/TEMP/a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0?width=150",
+            "https://i.pinimg.com/736x/a1/29/e6/a129e647afc7722fba23f1ce881893a8.jpg",
         },
       ],
     },
