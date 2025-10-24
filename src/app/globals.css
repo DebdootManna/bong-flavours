@@ -1,111 +1,133 @@
-@import url('https://fonts.googleapis.com/css2?family=Gupter:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --brand-maroon: #6F1D1B;
-  --brand-tan: #BB9457;
-  --brand-dark: #432818;
-  --brand-brown: #99582A;
-  --brand-cream: #FFE6A7;
+    --brand-maroon: #6f1d1b;
+    --brand-tan: #bb9457;
+    --brand-dark: #432818;
+    --brand-brown: #99582a;
+    --brand-cream: #ffe6a7;
+    --new-background: #6f1d1b;
+    --new-foreground: #ffe6a7;
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  font-family: 'Gupter', serif;
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: serif;
 }
 
 body {
-  color: var(--brand-cream);
-  background: var(--brand-dark);
-  font-family: 'Gupter', serif;
+    color: var(--new-foreground);
+    background: var(--new-background);
+    font-family: serif;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Font utility classes */
+.font-title {
+    font-family: "Oswald", sans-serif;
+    font-weight: 700;
+}
+
+.font-heading {
+    font-family: "Oswald", sans-serif;
+    font-weight: 400;
+}
+
+.font-subheading {
+    font-family: sans-serif;
+}
+
+.font-body {
+    font-family: serif;
 }
 
 /* Natural, responsive scrolling */
 html {
-  scroll-behavior: auto;
-  overflow-x: hidden;
+    scroll-behavior: auto;
+    overflow-x: hidden;
 }
 
 body {
-  scroll-behavior: auto;
-  overflow-x: hidden;
+    scroll-behavior: auto;
+    overflow-x: hidden;
 }
 
 /* Performance optimizations for smooth scrolling */
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Ensure no interference with native scrolling */
-html, body {
-  height: auto;
-  min-height: 100vh;
+html,
+body {
+    height: auto;
+    min-height: 100vh;
 }
 
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  html {
-    scroll-behavior: auto;
-  }
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--brand-dark);
+    background: var(--new-background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--brand-tan);
-  border-radius: 4px;
+    background: var(--new-foreground);
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-maroon);
+    background: var(--brand-tan);
 }
 
 /* Veg/Non-veg indicators */
 .veg-indicator {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid #28a745;
-  background: #28a745;
-  border-radius: 2px;
-  margin-right: 8px;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #28a745;
+    background: #28a745;
+    border-radius: 2px;
+    margin-right: 8px;
 }
 
 .non-veg-indicator {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid #dc3545;
-  background: #dc3545;
-  border-radius: 2px;
-  margin-right: 8px;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #dc3545;
+    background: #dc3545;
+    border-radius: 2px;
+    margin-right: 8px;
 }
