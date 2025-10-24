@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface User {
   _id: string;
@@ -45,7 +45,7 @@ interface Booking {
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [users, setUsers] = useState<User[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -54,36 +54,46 @@ export default function AdminDashboard() {
     totalUsers: 0,
     totalOrders: 0,
     totalBookings: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
   });
   const router = useRouter();
 
   useEffect(() => {
     // Check if user is logged in and is admin
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem("user");
     if (!userData) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
 
     const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'admin') {
-      router.push('/');
+    if (parsedUser.role !== "admin") {
+      router.push("/");
       return;
     }
 
     setUser(parsedUser);
-    
+
     // Define fetchDashboardData inside useEffect to avoid dependency warning
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
+        // Get auth token for API requests
+        const token = localStorage.getItem("auth-token");
+        const headers: HeadersInit = {
+          "Content-Type": "application/json",
+        };
+
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
         // Fetch all data in parallel
         const [usersRes, ordersRes, bookingsRes] = await Promise.all([
-          fetch('/api/admin/users'),
-          fetch('/api/admin/orders'),
-          fetch('/api/admin/bookings')
+          fetch("/api/admin/users", { headers }),
+          fetch("/api/admin/orders", { headers }),
+          fetch("/api/admin/bookings", { headers }),
         ]);
 
         let usersData: User[] = [];
@@ -109,16 +119,18 @@ export default function AdminDashboard() {
         }
 
         // Calculate stats
-        const totalRevenue = ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
+        const totalRevenue = ordersData.reduce(
+          (sum, order) => sum + order.totalAmount,
+          0,
+        );
         setStats({
           totalUsers: usersData.length,
           totalOrders: ordersData.length,
           totalBookings: bookingsData.length,
-          totalRevenue
+          totalRevenue,
         });
-
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        console.error("Failed to fetch dashboard data:", error);
       } finally {
         setLoading(false);
       }
@@ -130,12 +142,22 @@ export default function AdminDashboard() {
   const refreshData = async () => {
     try {
       setLoading(true);
-      
+
+      // Get auth token for API requests
+      const token = localStorage.getItem("auth-token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       // Fetch all data in parallel
       const [usersRes, ordersRes, bookingsRes] = await Promise.all([
-        fetch('/api/admin/users'),
-        fetch('/api/admin/orders'),
-        fetch('/api/admin/bookings')
+        fetch("/api/admin/users", { headers }),
+        fetch("/api/admin/orders", { headers }),
+        fetch("/api/admin/bookings", { headers }),
       ]);
 
       let usersData: User[] = [];
@@ -161,16 +183,18 @@ export default function AdminDashboard() {
       }
 
       // Calculate stats
-      const totalRevenue = ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
+      const totalRevenue = ordersData.reduce(
+        (sum, order) => sum + order.totalAmount,
+        0,
+      );
       setStats({
         totalUsers: usersData.length,
         totalOrders: ordersData.length,
         totalBookings: bookingsData.length,
-        totalRevenue
+        totalRevenue,
       });
-
     } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
+      console.error("Failed to fetch dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -178,21 +202,28 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      localStorage.removeItem('user');
-      router.push('/login');
+      await fetch("/api/auth/logout", { method: "POST" });
+      localStorage.removeItem("user");
+      router.push("/login");
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
+      const token = localStorage.getItem("auth-token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`/api/orders/${orderId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "PATCH",
+        headers,
         body: JSON.stringify({ status }),
       });
 
@@ -200,17 +231,24 @@ export default function AdminDashboard() {
         refreshData(); // Refresh data
       }
     } catch (error) {
-      console.error('Failed to update order status:', error);
+      console.error("Failed to update order status:", error);
     }
   };
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
+      const token = localStorage.getItem("auth-token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`/api/bookings/${bookingId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "PATCH",
+        headers,
         body: JSON.stringify({ status }),
       });
 
@@ -218,7 +256,7 @@ export default function AdminDashboard() {
         refreshData(); // Refresh data
       }
     } catch (error) {
-      console.error('Failed to update booking status:', error);
+      console.error("Failed to update booking status:", error);
     }
   };
 
@@ -240,7 +278,9 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Bong Flavours Admin</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Bong Flavours Admin
+              </h1>
               <p className="text-gray-600">Welcome back, {user?.name}</p>
             </div>
             <button
@@ -258,18 +298,19 @@ export default function AdminDashboard() {
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
             {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'orders', label: 'Orders' },
-              { id: 'bookings', label: 'Bookings' },
-              { id: 'users', label: 'Users' }
+              { id: "overview", label: "Overview" },
+              { id: "analytics", label: "Analytics" },
+              { id: "orders", label: "Orders" },
+              { id: "bookings", label: "Bookings" },
+              { id: "users", label: "Users" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? "border-orange-500 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
                 {tab.label}
@@ -281,31 +322,285 @@ export default function AdminDashboard() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === 'overview' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-500">Total Users</h3>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
+        {activeTab === "overview" && (
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">
+                  Total Users
+                </h3>
+                <p className="text-3xl font-bold text-gray-900">
+                  {stats.totalUsers}
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">
+                  Total Orders
+                </h3>
+                <p className="text-3xl font-bold text-gray-900">
+                  {stats.totalOrders}
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">
+                  Total Bookings
+                </h3>
+                <p className="text-3xl font-bold text-gray-900">
+                  {stats.totalBookings}
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-sm font-medium text-gray-500">
+                  Total Revenue
+                </h3>
+                <p className="text-3xl font-bold text-gray-900">
+                  ₹{stats.totalRevenue}
+                </p>
+              </div>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-500">Total Orders</h3>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalOrders}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-500">Total Bookings</h3>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalBookings}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-sm font-medium text-gray-500">Total Revenue</h3>
-              <p className="text-3xl font-bold text-gray-900">₹{stats.totalRevenue}</p>
+
+            {/* Recent Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Recent Orders */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Recent Orders
+                </h3>
+                <div className="space-y-3">
+                  {orders.slice(0, 5).map((order) => (
+                    <div
+                      key={order._id}
+                      className="flex justify-between items-center py-2 border-b border-gray-100"
+                    >
+                      <div>
+                        <p className="font-medium text-sm">
+                          {order.orderNumber}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {order.user.name}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-sm">
+                          ₹{order.totalAmount}
+                        </p>
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs ${
+                            order.status === "delivered"
+                              ? "bg-green-100 text-green-800"
+                              : order.status === "preparing"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Bookings */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Recent Bookings
+                </h3>
+                <div className="space-y-3">
+                  {bookings.slice(0, 5).map((booking) => (
+                    <div
+                      key={booking._id}
+                      className="flex justify-between items-center py-2 border-b border-gray-100"
+                    >
+                      <div>
+                        <p className="font-medium text-sm">
+                          {booking.user.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(booking.date).toLocaleDateString()} at{" "}
+                          {booking.time}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-sm">
+                          {booking.guests} guests
+                        </p>
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs ${
+                            booking.status === "confirmed"
+                              ? "bg-green-100 text-green-800"
+                              : booking.status === "requested"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {booking.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {activeTab === 'orders' && (
+        {activeTab === "analytics" && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Analytics Dashboard
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {/* Order Status Distribution */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Order Status Distribution
+                </h3>
+                <div className="space-y-2">
+                  {[
+                    "pending",
+                    "confirmed",
+                    "preparing",
+                    "delivered",
+                    "cancelled",
+                  ].map((status) => {
+                    const count = orders.filter(
+                      (order) => order.status === status,
+                    ).length;
+                    const percentage =
+                      orders.length > 0
+                        ? ((count / orders.length) * 100).toFixed(1)
+                        : "0";
+                    return (
+                      <div
+                        key={status}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="capitalize text-sm">{status}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{count}</span>
+                          <span className="text-xs text-gray-500">
+                            ({percentage}%)
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Booking Status Distribution */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Booking Status Distribution
+                </h3>
+                <div className="space-y-2">
+                  {["requested", "confirmed", "completed", "cancelled"].map(
+                    (status) => {
+                      const count = bookings.filter(
+                        (booking) => booking.status === status,
+                      ).length;
+                      const percentage =
+                        bookings.length > 0
+                          ? ((count / bookings.length) * 100).toFixed(1)
+                          : "0";
+                      return (
+                        <div
+                          key={status}
+                          className="flex justify-between items-center"
+                        >
+                          <span className="capitalize text-sm">{status}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{count}</span>
+                            <span className="text-xs text-gray-500">
+                              ({percentage}%)
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    },
+                  )}
+                </div>
+              </div>
+
+              {/* Average Order Value */}
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Order Analytics
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-sm">Average Order Value</span>
+                    <span className="font-medium">
+                      ₹
+                      {orders.length > 0
+                        ? (stats.totalRevenue / orders.length).toFixed(0)
+                        : "0"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Highest Order</span>
+                    <span className="font-medium">
+                      ₹
+                      {orders.length > 0
+                        ? Math.max(...orders.map((o) => o.totalAmount))
+                        : "0"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">Total Items Sold</span>
+                    <span className="font-medium">
+                      {orders.reduce(
+                        (sum, order) =>
+                          sum +
+                          order.items.reduce(
+                            (itemSum, item) => itemSum + item.quantity,
+                            0,
+                          ),
+                        0,
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* User Growth */}
+            <div className="bg-white p-6 rounded-lg shadow mb-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                User Statistics
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <p className="text-2xl font-bold text-blue-600">
+                    {users.filter((u) => u.role === "customer").length}
+                  </p>
+                  <p className="text-sm text-blue-600">Customers</p>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <p className="text-2xl font-bold text-green-600">
+                    {users.filter((u) => u.role === "admin").length}
+                  </p>
+                  <p className="text-sm text-green-600">Admins</p>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <p className="text-2xl font-bold text-purple-600">
+                    {users.length}
+                  </p>
+                  <p className="text-sm text-purple-600">Total Users</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "orders" && (
           <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">Recent Orders</h3>
+              <h3 className="text-lg font-medium text-gray-900">
+                Recent Orders
+              </h3>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -341,19 +636,26 @@ export default function AdminDashboard() {
                         ₹{order.totalAmount}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                          order.status === 'preparing' ? 'bg-yellow-100 text-yellow-800' :
-                          order.status === 'pending' ? 'bg-gray-100 text-gray-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            order.status === "delivered"
+                              ? "bg-green-100 text-green-800"
+                              : order.status === "preparing"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : order.status === "pending"
+                                  ? "bg-gray-100 text-gray-800"
+                                  : "bg-red-100 text-red-800"
+                          }`}
+                        >
                           {order.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <select
                           value={order.status}
-                          onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                          onChange={(e) =>
+                            updateOrderStatus(order._id, e.target.value)
+                          }
                           className="border border-gray-300 rounded px-2 py-1 text-sm"
                         >
                           <option value="pending">Pending</option>
@@ -372,10 +674,12 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeTab === 'bookings' && (
+        {activeTab === "bookings" && (
           <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">Recent Bookings</h3>
+              <h3 className="text-lg font-medium text-gray-900">
+                Recent Bookings
+              </h3>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -405,24 +709,31 @@ export default function AdminDashboard() {
                         {booking.user.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(booking.date).toLocaleDateString()} at {booking.time}
+                        {new Date(booking.date).toLocaleDateString()} at{" "}
+                        {booking.time}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {booking.guests}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                          booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            booking.status === "confirmed"
+                              ? "bg-green-100 text-green-800"
+                              : booking.status === "pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                          }`}
+                        >
                           {booking.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <select
                           value={booking.status}
-                          onChange={(e) => updateBookingStatus(booking._id, e.target.value)}
+                          onChange={(e) =>
+                            updateBookingStatus(booking._id, e.target.value)
+                          }
                           className="border border-gray-300 rounded px-2 py-1 text-sm"
                         >
                           <option value="pending">Pending</option>
@@ -438,7 +749,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeTab === 'users' && (
+        {activeTab === "users" && (
           <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-medium text-gray-900">All Users</h3>
@@ -474,9 +785,13 @@ export default function AdminDashboard() {
                         {user.email}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            user.role === "admin"
+                              ? "bg-purple-100 text-purple-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
                           {user.role}
                         </span>
                       </td>
