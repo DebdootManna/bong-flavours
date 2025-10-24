@@ -41,16 +41,10 @@ export default function LoginPage() {
     >
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2
-            className="mt-6 font-title text-5xl font-bold"
-            style={{ color: "#FFE6A7" }}
-          >
+          <h2 className="mt-6 font-title text-5xl font-bold text-[#FFE6A7]">
             Welcome to Bong Flavours
           </h2>
-          <p
-            className="mt-2 font-subheading text-base"
-            style={{ color: "#FFE6A7" }}
-          >
+          <p className="mt-2 font-subheading text-base text-[#FFE6A7]">
             Sign in to your account
           </p>
         </div>
@@ -60,8 +54,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block font-subheading text-base font-medium"
-                style={{ color: "#FFE6A7" }}
+                className="block font-subheading text-base font-medium text-[#FFE6A7]"
               >
                 Email address
               </label>
@@ -71,13 +64,7 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-opacity-30 font-body text-base rounded-md focus:outline-none focus:ring-2 focus:z-10"
-                style={{
-                  backgroundColor: "#FFE6A7",
-                  color: "#6F1D1B",
-                  borderColor: "#FFE6A7",
-                  fontSize: "16px",
-                }}
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border font-body text-base rounded-md focus:outline-none focus:ring-2 focus:z-10 bg-[#FFE6A7] text-[#6F1D1B] border-[#FFE6A7]"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -87,8 +74,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block font-subheading text-base font-medium"
-                style={{ color: "#FFE6A7" }}
+                className="block font-subheading text-base font-medium text-[#FFE6A7]"
               >
                 Password
               </label>
@@ -98,13 +84,7 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-opacity-30 font-body text-base rounded-md focus:outline-none focus:ring-2 focus:z-10"
-                style={{
-                  backgroundColor: "#FFE6A7",
-                  color: "#6F1D1B",
-                  borderColor: "#FFE6A7",
-                  fontSize: "16px",
-                }}
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border font-body text-base rounded-md focus:outline-none focus:ring-2 focus:z-10 bg-[#FFE6A7] text-[#6F1D1B] border-[#FFE6A7]"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -112,10 +92,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div
-                className="font-body text-base text-center"
-                style={{ color: "#FFE6A7" }}
-              >
+              <div className="font-body text-base text-center text-[#FFE6A7]">
                 {error}
               </div>
             )}
@@ -124,11 +101,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent font-heading text-lg font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 transition-colors duration-200 hover:opacity-90"
-                style={{
-                  backgroundColor: "#FFE6A7",
-                  color: "#6F1D1B",
-                }}
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent font-heading text-lg font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 transition-colors duration-200 hover:opacity-90 bg-[#FFE6A7] text-[#6F1D1B]"
               >
                 {loading ? "Signing in..." : "Sign in"}
               </button>
@@ -138,8 +111,7 @@ export default function LoginPage() {
           <div className="text-center">
             <Link
               href="/signup"
-              className="font-subheading text-base font-medium hover:underline"
-              style={{ color: "#FFE6A7" }}
+              className="font-subheading text-base font-medium hover:underline text-[#FFE6A7]"
             >
               Don&apos;t have an account? Sign up
             </Link>

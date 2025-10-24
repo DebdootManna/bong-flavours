@@ -605,7 +605,7 @@ const ProfilePage = () => {
                         className="text-[#6F1D1B] mb-6"
                         style={{ fontFamily: "serif", fontSize: "18px" }}
                       >
-                        You haven't placed any orders yet.
+                        You haven&apos;t placed any orders yet.
                       </p>
                       <Link
                         href="/app/menu"
