@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface MenuItem {
   name: string;
@@ -19,6 +20,7 @@ interface MenuSection {
 }
 
 export default function MenuPage() {
+  const { user, loading } = useAuth();
   const [activeCategory, setActiveCategory] = useState("Starters");
 
   const categories = ["Starters", "Biryani", "Main Course", "Chinese", "Rolls"];
@@ -260,18 +262,29 @@ export default function MenuPage() {
         </div>
 
         <div className="flex items-center gap-4 border border-white rounded-full px-4 py-2">
-          <Link
-            href="/login"
-            className="text-white text-base md:text-lg underline font-instrument-sans"
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="text-white text-base md:text-lg underline font-instrument-sans"
-          >
-            Sign Up
-          </Link>
+          {!loading && user ? (
+            <Link
+              href="/app/profile"
+              className="text-white text-base md:text-lg underline font-instrument-sans"
+            >
+              View Profile
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-white text-base md:text-lg underline font-instrument-sans"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="text-white text-base md:text-lg underline font-instrument-sans"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
