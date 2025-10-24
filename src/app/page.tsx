@@ -231,9 +231,12 @@ export default function Home() {
                     <p className="text-[#A44200] text-lg font-bold font-poppins mb-4">
                       {item.price}
                     </p>
-                    <button className="w-full bg-gradient-to-b from-[#A44200] to-[#A44200] text-[#F2F3AE] px-6 py-2 rounded-md font-albert-sans font-bold hover:opacity-90 transition-opacity">
+                    <Link
+                      href="/menu"
+                      className="w-full bg-gradient-to-b from-[#A44200] to-[#A44200] text-[#F2F3AE] px-6 py-2 rounded-md font-albert-sans font-bold hover:opacity-90 transition-opacity inline-block text-center"
+                    >
                       View
-                    </button>
+                    </Link>
                   </div>
                 </motion.div>
               ))}
