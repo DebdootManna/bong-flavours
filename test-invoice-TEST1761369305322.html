@@ -1,0 +1,211 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Invoice #TEST1761369305322</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 20px;
+          color: #333;
+          background: white;
+        }
+        .invoice-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 30px;
+          border-bottom: 3px solid #6F1D1B;
+          padding-bottom: 20px;
+        }
+        .company-info h1 {
+          color: #6F1D1B;
+          margin: 0;
+          font-size: 28px;
+          font-weight: bold;
+        }
+        .company-info p {
+          margin: 5px 0;
+          color: #666;
+        }
+        .invoice-info {
+          text-align: right;
+        }
+        .invoice-info h2 {
+          color: #6F1D1B;
+          margin: 0;
+          font-size: 24px;
+        }
+        .customer-info {
+          background: #f9f9f9;
+          padding: 20px;
+          border-radius: 8px;
+          margin-bottom: 30px;
+        }
+        .customer-info h3 {
+          color: #6F1D1B;
+          margin: 0 0 15px 0;
+          font-size: 18px;
+        }
+        .items-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 30px;
+        }
+        .items-table th {
+          background: #6F1D1B;
+          color: white;
+          padding: 12px;
+          text-align: left;
+          font-weight: bold;
+        }
+        .items-table td {
+          padding: 12px;
+          border-bottom: 1px solid #ddd;
+        }
+        .item-qty, .item-price, .item-total {
+          text-align: right;
+        }
+        .totals {
+          float: right;
+          width: 300px;
+        }
+        .totals table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .totals td {
+          padding: 8px 12px;
+          border-bottom: 1px solid #ddd;
+        }
+        .totals .label {
+          text-align: right;
+          font-weight: bold;
+        }
+        .totals .amount {
+          text-align: right;
+        }
+        .total-row {
+          background: #f0f0f0;
+          font-weight: bold;
+          font-size: 16px;
+        }
+        .total-row .amount {
+          color: #6F1D1B;
+        }
+        .footer {
+          clear: both;
+          margin-top: 50px;
+          padding-top: 20px;
+          border-top: 2px solid #6F1D1B;
+          text-align: center;
+          color: #666;
+        }
+        .payment-info {
+          background: #fff3cd;
+          border: 1px solid #ffeaa7;
+          border-radius: 5px;
+          padding: 15px;
+          margin: 20px 0;
+          text-align: center;
+        }
+        .payment-info strong {
+          color: #856404;
+        }
+        @media print {
+          body { margin: 0; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="invoice-header">
+        <div class="company-info">
+          <h1>Bong Flavours</h1>
+          <p>Authentic Bengali Restaurant</p>
+          <p>Phone: 8238018577</p>
+          <p>Email: mannadebdoot007@gmail.com</p>
+        </div>
+        <div class="invoice-info">
+          <h2>INVOICE</h2>
+          <p><strong>Invoice #:</strong> TEST1761369305322</p>
+          <p><strong>Date:</strong> 25/10/2025</p>
+        </div>
+      </div>
+
+      <div class="customer-info">
+        <h3>Bill To:</h3>
+        <p><strong>Test Customer</strong></p>
+        <p>Email: test@example.com</p>
+        <p>Phone: +91 9999999999</p>
+        <p>Delivery Address: Test Address, Test City, 110001</p>
+      </div>
+
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Item Description</th>
+            <th style="width: 80px;">Qty</th>
+            <th style="width: 100px;">Price</th>
+            <th style="width: 100px;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr>
+      <td class="item-name">Paneer Kathi Roll</td>
+      <td class="item-qty">2</td>
+      <td class="item-price">₹140.00</td>
+      <td class="item-total">₹280.00</td>
+    </tr>
+  
+    <tr>
+      <td class="item-name">Egg Chicken Kathi Roll</td>
+      <td class="item-qty">1</td>
+      <td class="item-price">₹170.00</td>
+      <td class="item-total">₹170.00</td>
+    </tr>
+  
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <table>
+          <tr>
+            <td class="label">Subtotal:</td>
+            <td class="amount">₹450.00</td>
+          </tr>
+          <tr>
+            <td class="label">Tax (18%):</td>
+            <td class="amount">₹81.00</td>
+          </tr>
+          
+          <tr>
+            <td class="label">Delivery Fee:</td>
+            <td class="amount">₹40.00</td>
+          </tr>
+          
+          <tr class="total-row">
+            <td class="label">Total:</td>
+            <td class="amount">₹571.00</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="payment-info">
+        <strong>Payment Method: Cash on Delivery</strong>
+      </div>
+
+      <div class="footer">
+        <p>Thank you for choosing Bong Flavours!</p>
+        <p>For any queries regarding this invoice, please contact us at 8238018577</p>
+      </div>
+
+      <div class="no-print" style="text-align: center; margin-top: 30px;">
+        <button onclick="window.print()" style="background: #6F1D1B; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Print Invoice</button>
+      </div>
+    </body>
+    </html>
+  

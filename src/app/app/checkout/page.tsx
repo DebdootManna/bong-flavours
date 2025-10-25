@@ -665,7 +665,7 @@ const CheckoutPage = () => {
                         value="online"
                         checked={paymentMethod === "online"}
                         onChange={(e) =>
-                          setPaymentMethod(e.target.value as "cash" | "online")
+                          setPaymentMethod(e.target.value as "cod" | "online")
                         }
                         className="mr-3 h-4 w-4 text-[#6F1D1B]"
                       />

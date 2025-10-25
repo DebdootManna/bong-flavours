@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
-import fs from "fs";
+
+import os from "os";
 // PDF invoice generation system for Bong Flavours restaurant
 
 interface InvoiceData {
@@ -238,62 +239,194 @@ function generateInvoiceHTML(data: InvoiceData): string {
   `;
 }
 
+
 export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
   const html = generateInvoiceHTML(data);
 
-  // Configure Puppeteer for different environments
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const puppeteerConfig: Record<string, any> = {
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
-      "--no-first-run",
-      "--no-zygote",
-      "--single-process",
-    ],
-    headless: "new" as const,
+  console.log("📄 Starting PDF generation for order:", data.orderId);
+
+  // Check available memory and system resources
+  const availableMemoryMB = Math.round(os.freemem() / 1024 / 1024);
+  console.log("💾 Available memory:", availableMemoryMB, "MB");
+  console.log("🖥️ Platform:", os.platform(), os.arch());
+
+  // Find system Chrome paths based on platform
+  const getSystemChromePaths = () => {
+    switch (os.platform()) {
+      case 'darwin': // macOS
+        return [
+          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+          '/Applications/Chromium.app/Contents/MacOS/Chromium',
+          '/opt/homebrew/bin/chromium',
+          '/usr/local/bin/chromium'
+        ];
+      case 'linux':
+        return [
+          '/usr/bin/google-chrome',
+          '/usr/bin/google-chrome-stable',
+          '/usr/bin/chromium-browser',
+          '/usr/bin/chromium',
+          '/snap/bin/chromium'
+        ];
+      case 'win32':
+        return [
+          'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+        ];
+      default:
+        return [];
+    }
   };
 
-  // Clear any environment variables that might override our path detection
-  delete process.env.PUPPETEER_EXECUTABLE_PATH;
-
-  // For development: Try to find Chrome, otherwise use bundled Chromium
-  const possibleChromePaths = [
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/Applications/Chromium.app/Contents/MacOS/Chromium",
-    "/usr/bin/google-chrome",
-    "/usr/bin/chromium-browser",
-    "/snap/bin/chromium",
-  ];
-
-  let chromeFound = false;
-  for (const chromePath of possibleChromePaths) {
+  // Test if a Chrome executable exists
+  const testExecutable = async (path: string): Promise<boolean> => {
     try {
-      if (fs.existsSync(chromePath)) {
-        puppeteerConfig.executablePath = chromePath;
-        chromeFound = true;
-        console.log(`Using Chrome at: ${chromePath}`);
-        break;
-      }
+      const fs = await import('fs/promises');
+      await fs.access(path);
+      return true;
     } catch {
-      // Continue to next path
+      return false;
+    }
+  };
+
+  // Find available Chrome executable
+  let systemChrome: string | undefined;
+  const chromePaths = getSystemChromePaths();
+  for (const chromePath of chromePaths) {
+    if (await testExecutable(chromePath)) {
+      systemChrome = chromePath;
+      console.log("🔍 Found system Chrome:", chromePath);
+      break;
     }
   }
 
-  if (!chromeFound) {
-    console.log("Using bundled Chromium for PDF generation");
-    // Remove executablePath to use bundled Chromium
-    delete puppeteerConfig.executablePath;
+  // Progressive configuration attempts - prioritize system Chrome
+  const configs = [];
+
+  // Always try system Chrome first if available
+  if (systemChrome) {
+    configs.push({
+      name: "System Chrome (Standard)",
+      config: {
+        executablePath: systemChrome,
+        headless: "new" as const,
+        timeout: 30000,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--no-first-run",
+          "--disable-default-apps"
+        ]
+      }
+    });
+
+    configs.push({
+      name: "System Chrome (Minimal)",
+      config: {
+        executablePath: systemChrome,
+        headless: true,
+        timeout: 25000,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--single-process",
+          "--no-zygote"
+        ]
+      }
+    });
   }
 
-  const browser = await puppeteer.launch(puppeteerConfig);
+  // Only try bundled Chrome if system Chrome not available
+  if (!systemChrome) {
+    configs.push({
+      name: "Bundled Chrome (if available)",
+      config: {
+        headless: "new" as const,
+        timeout: 25000,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--disable-software-rasterizer",
+          "--single-process",
+          "--no-zygote",
+          "--memory-pressure-off"
+        ]
+      }
+    });
+  }
+
+  let browser;
+  let lastError;
+
+  // Try each configuration
+  for (const { name, config } of configs) {
+    try {
+      console.log(`🚀 Attempting PDF generation with ${name}...`);
+
+      // Kill any existing Chrome processes that might be hanging
+      try {
+        const { execSync } = await import('child_process');
+        if (os.platform() === 'darwin') {
+          execSync('pkill -f "Chrome for Testing" || true', { stdio: 'ignore' });
+          execSync('pkill -f "chrome-headless-shell" || true', { stdio: 'ignore' });
+        }
+      } catch {
+        // Ignore errors from process killing
+      }
+
+      browser = await puppeteer.launch(config);
+      console.log(`✅ Browser launched successfully with ${name}`);
+      break;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn(`⚠️ ${name} failed:`, errorMsg);
+      lastError = error;
+
+      // Clean up any partial browser instance
+      if (browser) {
+        try {
+          await browser.close();
+        } catch {}
+        browser = undefined;
+      }
+    }
+  }
+
+  if (!browser) {
+    console.error("❌ All Puppeteer configurations failed. Last error:", lastError);
+    throw new Error(`PDF generation failed - all browser configs exhausted: ${lastError instanceof Error ? lastError.message : String(lastError)}`);
+  }
 
   try {
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
 
+    // Set minimal viewport and timeouts
+    await page.setViewport({ width: 800, height: 600 });
+    page.setDefaultTimeout(15000);
+
+    // Disable images and other resources to save memory
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+      if (['image', 'stylesheet', 'font'].includes(request.resourceType())) {
+        request.abort();
+      } else {
+        request.continue();
+      }
+    });
+
+    console.log("📝 Setting page content...");
+    await page.setContent(html, {
+      waitUntil: "domcontentloaded",
+      timeout: 15000
+    });
+
+    console.log("🖨️ Generating PDF...");
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -303,11 +436,55 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
         bottom: "20px",
         left: "20px",
       },
+      timeout: 20000
     });
 
+    console.log("✅ PDF generated successfully for order:", data.orderId, "Size:", pdf.length, "bytes");
     return Buffer.from(pdf);
   } finally {
-    await browser.close();
+    if (browser) {
+      try {
+        await browser.close();
+        console.log("🔒 Browser closed successfully");
+      } catch (closeError) {
+        console.warn("⚠️ Error closing browser:", closeError);
+      }
+    }
+  }
+}
+
+// New function: Generate HTML invoice as fallback
+export function generateInvoiceHTMLBuffer(data: InvoiceData): Buffer {
+  const html = generateInvoiceHTML(data);
+  console.log("📄 Generated HTML invoice fallback for order:", data.orderId);
+  return Buffer.from(html, 'utf8');
+}
+
+// New function: Safe PDF generation with HTML fallback
+export async function generateInvoiceWithFallback(data: InvoiceData): Promise<{
+  buffer: Buffer;
+  isPDF: boolean;
+  contentType: string;
+  filename: string;
+}> {
+  try {
+    console.log("🎯 Attempting PDF generation for order:", data.orderId);
+    const pdfBuffer = await generateInvoicePDF(data);
+    return {
+      buffer: pdfBuffer,
+      isPDF: true,
+      contentType: 'application/pdf',
+      filename: `invoice-${data.orderId}.pdf`
+    };
+  } catch (error) {
+    console.warn("🔄 PDF generation failed, using HTML fallback:", error instanceof Error ? error.message : String(error));
+    const htmlBuffer = generateInvoiceHTMLBuffer(data);
+    return {
+      buffer: htmlBuffer,
+      isPDF: false,
+      contentType: 'text/html',
+      filename: `invoice-${data.orderId}.html`
+    };
   }
 }
 

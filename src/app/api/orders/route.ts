@@ -4,7 +4,7 @@ import Order from "@/models/Order";
 import User from "@/models/User";
 import { verifyToken } from "@/lib/auth";
 import { z } from "zod";
-import { generateInvoicePDF } from "@/lib/invoice";
+import { generateInvoiceWithFallback } from "@/lib/invoice";
 import { sendOrderEmail } from "@/lib/mailer";
 
 interface OrderItem {
@@ -201,89 +201,149 @@ export async function POST(req: NextRequest) {
     // Populate user details for response
     await order.populate("userId", "name email phone");
 
-    // Generate and send invoice automatically
-    try {
-      console.log("Generating invoice for order:", order.orderNumber);
+    // Generate and send invoice automatically with retry logic
+    let invoiceGenerated = false;
+    let emailsSent = false;
 
-      // Prepare invoice data
-      const invoiceData = {
+    console.log("Starting invoice generation for order:", order.orderNumber);
+
+    // Prepare invoice data
+    const invoiceData = {
+      orderId: order.orderNumber,
+      customerName: order.customerInfo.name,
+      customerEmail: order.customerInfo.email,
+      customerPhone: order.customerInfo.phone,
+      deliveryAddress: order.deliveryInfo.address,
+      items: order.items.map((item: OrderItem) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      subtotal: order.subtotal,
+      tax: order.tax,
+      deliveryFee: order.deliveryFee || 40,
+      total: order.total,
+      orderDate: new Date(order.createdAt).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      paymentMethod:
+        order.paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment",
+    };
+
+    // Generate invoice with fallback system
+    let invoiceBuffer: Buffer | null = null;
+    let invoiceType: string = 'unknown';
+    let invoiceFilename: string = `invoice-${order.orderNumber}.pdf`;
+
+    try {
+      console.log("📄 Starting invoice generation for order:", order.orderNumber);
+      console.log("🔧 System info - Memory:", process.memoryUsage());
+      console.log("🔧 Platform:", process.platform, process.arch);
+
+      const invoiceStartTime = Date.now();
+      const invoiceResult = await generateInvoiceWithFallback(invoiceData);
+      const invoiceDuration = Date.now() - invoiceStartTime;
+
+      invoiceBuffer = invoiceResult.buffer;
+      invoiceType = invoiceResult.contentType;
+      invoiceFilename = invoiceResult.filename;
+      invoiceGenerated = true;
+
+      console.log(`✅ Invoice generated successfully in ${invoiceDuration}ms`);
+      console.log(`📊 Invoice type: ${invoiceResult.isPDF ? 'PDF' : 'HTML'}, Size: ${invoiceBuffer.length} bytes`);
+
+      if (!invoiceResult.isPDF) {
+        console.log("⚠️ Note: HTML fallback was used due to PDF generation issues");
+      }
+    } catch (invoiceError) {
+      console.error("❌ Invoice generation completely failed:", invoiceError);
+      console.error("💡 Order will be created without invoice - can be generated later");
+    }
+
+    // Try to send emails (with or without PDF attachment)
+    try {
+      console.log("📧 Starting email sending process...");
+
+      // Prepare email data
+      const emailData = {
         orderId: order.orderNumber,
         customerName: order.customerInfo.name,
         customerEmail: order.customerInfo.email,
-        customerPhone: order.customerInfo.phone,
-        deliveryAddress: order.deliveryInfo.address,
         items: order.items.map((item: OrderItem) => ({
           name: item.name,
           quantity: item.quantity,
           price: item.price,
         })),
-        subtotal: order.subtotal,
-        tax: order.tax,
-        deliveryFee: order.deliveryFee || 40,
         total: order.total,
-        orderDate: new Date(order.createdAt).toLocaleDateString("en-IN", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        paymentMethod:
-          order.paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment",
+        address: order.deliveryInfo.address,
+        phone: order.customerInfo.phone,
       };
 
-      // Generate PDF invoice
-      const invoicePdf = await generateInvoicePDF(invoiceData);
-
-      // Try to send emails with invoice to both customer and admin
-      try {
-        // Prepare email data
-        const emailData = {
-          orderId: order.orderNumber,
-          customerName: order.customerInfo.name,
-          customerEmail: order.customerInfo.email,
-          items: order.items.map((item: OrderItem) => ({
-            name: item.name,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          total: order.total,
-          address: order.deliveryInfo.address,
-          phone: order.customerInfo.phone,
-        };
-
-        await sendOrderEmail(emailData, invoicePdf);
-        console.log(
-          "Invoice emails sent successfully for order:",
-          order.orderNumber,
-        );
-      } catch (emailError) {
-        console.error(
-          "Failed to send invoice emails (order still created):",
-          emailError,
-        );
-        // Continue without failing the order - emails can be sent manually later
+      if (invoiceGenerated && invoiceBuffer) {
+        console.log(`📎 Sending emails with ${invoiceType.includes('pdf') ? 'PDF' : 'HTML'} attachment`);
+        await sendOrderEmail(emailData, invoiceBuffer, invoiceFilename);
+      } else {
+        console.log("📧 Sending emails without attachment (invoice generation failed)");
+        // Send emails without attachment
+        await sendOrderEmail(emailData, Buffer.alloc(0));
       }
 
-      // Update order to mark invoice as sent
-      await Order.findByIdAndUpdate(order._id, {
-        invoiceUrl: `invoice-${order.orderNumber}.pdf`,
-        updatedAt: new Date(),
-      });
+      emailsSent = true;
+      console.log("✅ Order emails sent successfully for order:", order.orderNumber);
 
-      console.log(
-        "Invoice generated successfully for order:",
-        order.orderNumber,
-      );
-    } catch (invoiceError) {
-      console.error("Failed to generate invoice:", invoiceError);
-      // Don't fail the order creation if invoice generation fails
-      // The invoice can be generated later via the separate API endpoint
+    } catch (emailError) {
+      console.error("❌ Failed to send order emails (order still created):", emailError);
+      console.error("Email Error details:", {
+        message: emailError instanceof Error ? emailError.message : String(emailError),
+        code: (emailError as { code?: string })?.code,
+        stack: emailError instanceof Error ? emailError.stack?.split('\n').slice(0, 3).join('\n') : undefined
+      });
+    }
+
+    // Update order with results
+    const updateData: Record<string, unknown> = {
+      updatedAt: new Date(),
+    };
+
+    if (invoiceGenerated) {
+      updateData.invoiceUrl = `invoice-${order.orderNumber}.pdf`;
+    }
+
+    await Order.findByIdAndUpdate(order._id, updateData);
+
+    console.log("📊 Order processing summary:", {
+      orderNumber: order.orderNumber,
+      orderId: order._id,
+      invoiceGenerated,
+      emailsSent,
+      customerEmail: order.customerInfo.email,
+      totalAmount: order.total,
+      timestamp: new Date().toISOString()
+    });
+
+    // Log specific guidance based on results
+    if (!invoiceGenerated) {
+      console.log("💡 PDF generation failed - you can manually generate it later at:");
+      console.log(`   GET /api/invoices/${order._id}`);
+    }
+
+    if (!emailsSent) {
+      console.log("💡 Email sending failed - check SMTP configuration or use Mailtrap");
     }
 
     return NextResponse.json(
       {
         message: "Order created successfully",
+        orderNumber: order.orderNumber,
+        orderId: order._id,
+        total: order.total,
+        status: order.status,
+        invoiceGenerated,
+        emailsSent,
         order,
       },
       { status: 201 },

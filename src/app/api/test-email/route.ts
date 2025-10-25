@@ -5,7 +5,7 @@ import { sendEmail } from '@/lib/mailer'
 export async function GET() {
   try {
     console.log('Testing email configuration...')
-    
+
     // Test email
     await sendEmail({
       to: process.env.SMTP_USER || 'test@example.com',
@@ -19,16 +19,16 @@ export async function GET() {
     })
 
     console.log('Test email sent successfully!')
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Test email sent successfully!',
       emailTo: process.env.SMTP_USER
     })
 
   } catch (error) {
     console.error('Email test failed:', error)
-    return NextResponse.json({ 
-      success: false, 
+    return NextResponse.json({
+      success: false,
       message: 'Email test failed',
       error: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })

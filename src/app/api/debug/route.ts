@@ -5,7 +5,17 @@ import User from '@/models/User';
 import Order from '@/models/Order';
 
 export async function GET(req: NextRequest) {
-  const results: any = {
+  const results: {
+    timestamp: string;
+    environment: string | undefined;
+    tests: Record<string, unknown>;
+    overall?: {
+      status: string;
+      passedTests: number;
+      totalTests: number;
+      failedTests: number;
+    };
+  } = {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     tests: {}
@@ -156,7 +166,10 @@ export async function GET(req: NextRequest) {
   }
 
   // Calculate overall status
-  const failedTests = Object.values(results.tests).filter((test: any) => test.status === 'error');
+  const failedTests = Object.values(results.tests).filter((test) => {
+    const testObj = test as { status?: string };
+    return testObj.status === 'error';
+  });
   results.overall = {
     status: failedTests.length === 0 ? 'success' : 'error',
     passedTests: Object.keys(results.tests).length - failedTests.length,

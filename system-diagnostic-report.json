@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-10-25T05:26:09.351Z",
+  "system": {
+    "os": "Darwin 25.0.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "nodeVersion": "v24.8.0",
+    "totalMemory": "8 GB",
+    "freeMemory": "0 GB"
+  },
+  "recommendations": [
+    "Use Rosetta 2 for compatibility: arch -x86_64 node server.js",
+    "Consider using Docker with platform flag: --platform linux/amd64",
+    "Low memory detected - close other applications",
+    "For PDF issues: Use browser-based PDF generation as fallback",
+    "For email issues: Configure Mailtrap for development",
+    "Consider using system Chrome instead of bundled Chromium"
+  ]
+}
