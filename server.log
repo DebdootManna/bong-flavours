@@ -6153,3 +6153,5 @@ Profile V2 GET - Token decoded successfully, user ID: 68fbac9075b98fb9dfe9cf98
  GET /favicon.ico 200 in 992ms
 Profile V2 GET - User found: Debdoot
  GET /api/auth/profile-v2 200 in 889ms
+ ✓ Compiled in 587ms (611 modules)
+ GET / 200 in 303ms
