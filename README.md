@@ -37,7 +37,7 @@ A comprehensive Next.js-based e-commerce platform for a Bengali restaurant featu
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/DebdootManna/bong-flavours
    cd bong-flavours
    ```
 
