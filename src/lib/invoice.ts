@@ -1,34 +1,39 @@
-import puppeteer from 'puppeteer'
-import fs from 'fs'
+import puppeteer from "puppeteer";
+import fs from "fs";
 // PDF invoice generation system for Bong Flavours restaurant
 
 interface InvoiceData {
-  orderId: string
-  customerName: string
-  customerEmail: string
-  customerPhone: string
-  deliveryAddress: string
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  deliveryAddress: string;
   items: Array<{
-    name: string
-    quantity: number
-    price: number
-  }>
-  subtotal: number
-  tax: number
-  total: number
-  orderDate: string
-  paymentMethod: string
+    name: string;
+    quantity: number;
+    price: number;
+  }>;
+  subtotal: number;
+  tax: number;
+  deliveryFee?: number;
+  total: number;
+  orderDate: string;
+  paymentMethod: string;
 }
 
 function generateInvoiceHTML(data: InvoiceData): string {
-  const itemsHTML = data.items.map(item => `
+  const itemsHTML = data.items
+    .map(
+      (item) => `
     <tr>
       <td class="item-name">${item.name}</td>
       <td class="item-qty">${item.quantity}</td>
       <td class="item-price">₹${item.price.toFixed(2)}</td>
       <td class="item-total">₹${(item.quantity * item.price).toFixed(2)}</td>
     </tr>
-  `).join('')
+  `,
+    )
+    .join("");
 
   return `
     <!DOCTYPE html>
@@ -161,8 +166,8 @@ function generateInvoiceHTML(data: InvoiceData): string {
         <div class="company-info">
           <h1>Bong Flavours</h1>
           <p>Authentic Bengali Restaurant</p>
-          <p>Phone: ${process.env.NEXT_PUBLIC_RESTAURANT_PHONE || '8238018577'}</p>
-          <p>Email: ${process.env.NEXT_PUBLIC_RESTAURANT_EMAIL || 'mannadebdoot007@gmail.com'}</p>
+          <p>Phone: ${process.env.NEXT_PUBLIC_RESTAURANT_PHONE || "8238018577"}</p>
+          <p>Email: ${process.env.NEXT_PUBLIC_RESTAURANT_EMAIL || "mannadebdoot007@gmail.com"}</p>
         </div>
         <div class="invoice-info">
           <h2>INVOICE</h2>
@@ -200,9 +205,19 @@ function generateInvoiceHTML(data: InvoiceData): string {
             <td class="amount">₹${data.subtotal.toFixed(2)}</td>
           </tr>
           <tr>
-            <td class="label">Tax:</td>
+            <td class="label">Tax (18%):</td>
             <td class="amount">₹${data.tax.toFixed(2)}</td>
           </tr>
+          ${
+            data.deliveryFee
+              ? `
+          <tr>
+            <td class="label">Delivery Fee:</td>
+            <td class="amount">₹${data.deliveryFee.toFixed(2)}</td>
+          </tr>
+          `
+              : ""
+          }
           <tr class="total-row">
             <td class="label">Total:</td>
             <td class="amount">₹${data.total.toFixed(2)}</td>
@@ -216,51 +231,51 @@ function generateInvoiceHTML(data: InvoiceData): string {
 
       <div class="footer">
         <p>Thank you for choosing Bong Flavours!</p>
-        <p>For any queries regarding this invoice, please contact us at ${process.env.NEXT_PUBLIC_RESTAURANT_PHONE || '8238018577'}</p>
+        <p>For any queries regarding this invoice, please contact us at ${process.env.NEXT_PUBLIC_RESTAURANT_PHONE || "8238018577"}</p>
       </div>
     </body>
     </html>
-  `
+  `;
 }
 
 export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
-  const html = generateInvoiceHTML(data)
-  
+  const html = generateInvoiceHTML(data);
+
   // Configure Puppeteer for different environments
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const puppeteerConfig: Record<string, any> = {
     args: [
-      '--no-sandbox', 
-      '--disable-setuid-sandbox', 
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--no-first-run',
-      '--no-zygote',
-      '--single-process'
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-first-run",
+      "--no-zygote",
+      "--single-process",
     ],
-    headless: "new" as const
-  }
+    headless: "new" as const,
+  };
 
   // Clear any environment variables that might override our path detection
-  delete process.env.PUPPETEER_EXECUTABLE_PATH
+  delete process.env.PUPPETEER_EXECUTABLE_PATH;
 
   // For development: Try to find Chrome, otherwise use bundled Chromium
   const possibleChromePaths = [
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    '/Applications/Chromium.app/Contents/MacOS/Chromium',
-    '/usr/bin/google-chrome',
-    '/usr/bin/chromium-browser',
-    '/snap/bin/chromium'
-  ]
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium-browser",
+    "/snap/bin/chromium",
+  ];
 
-  let chromeFound = false
+  let chromeFound = false;
   for (const chromePath of possibleChromePaths) {
     try {
       if (fs.existsSync(chromePath)) {
-        puppeteerConfig.executablePath = chromePath
-        chromeFound = true
-        console.log(`Using Chrome at: ${chromePath}`)
-        break
+        puppeteerConfig.executablePath = chromePath;
+        chromeFound = true;
+        console.log(`Using Chrome at: ${chromePath}`);
+        break;
       }
     } catch {
       // Continue to next path
@@ -268,39 +283,45 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
   }
 
   if (!chromeFound) {
-    console.log('Using bundled Chromium for PDF generation')
+    console.log("Using bundled Chromium for PDF generation");
     // Remove executablePath to use bundled Chromium
-    delete puppeteerConfig.executablePath
+    delete puppeteerConfig.executablePath;
   }
-  
-  const browser = await puppeteer.launch(puppeteerConfig)
-  
+
+  const browser = await puppeteer.launch(puppeteerConfig);
+
   try {
-    const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: 'networkidle0' })
-    
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
     const pdf = await page.pdf({
-      format: 'A4',
+      format: "A4",
       printBackground: true,
       margin: {
-        top: '20px',
-        right: '20px',
-        bottom: '20px',
-        left: '20px'
-      }
-    })
-    
-    return Buffer.from(pdf)
+        top: "20px",
+        right: "20px",
+        bottom: "20px",
+        left: "20px",
+      },
+    });
+
+    return Buffer.from(pdf);
   } finally {
-    await browser.close()
+    await browser.close();
   }
 }
 
-export function calculateOrderTotals(items: Array<{ price: number; quantity: number }>) {
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const taxRate = 0.05 // 5% tax
-  const tax = subtotal * taxRate
-  const total = subtotal + tax
-  
-  return { subtotal, tax, total }
+export function calculateOrderTotals(
+  items: Array<{ price: number; quantity: number }>,
+) {
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+  const taxRate = 0.18; // 18% tax
+  const tax = Math.round(subtotal * taxRate);
+  const deliveryFee = 40;
+  const total = subtotal + tax + deliveryFee;
+
+  return { subtotal, tax, deliveryFee, total };
 }

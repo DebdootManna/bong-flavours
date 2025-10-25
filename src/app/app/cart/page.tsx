@@ -147,10 +147,13 @@ const CartPage = () => {
                             <button
                               onClick={() => {
                                 if (item.quantity === 1) {
-                                  removeFromCart(item.id, item.variantIndex);
+                                  removeFromCart(
+                                    item.menuItemId,
+                                    item.variantIndex,
+                                  );
                                 } else {
                                   updateQuantity(
-                                    item.id,
+                                    item.menuItemId,
                                     item.variantIndex,
                                     item.quantity - 1,
                                   );
@@ -170,7 +173,7 @@ const CartPage = () => {
                             <button
                               onClick={() =>
                                 updateQuantity(
-                                  item.id,
+                                  item.menuItemId,
                                   item.variantIndex,
                                   item.quantity + 1,
                                 )
@@ -185,7 +188,7 @@ const CartPage = () => {
                           {/* Remove Button */}
                           <button
                             onClick={() =>
-                              removeFromCart(item.id, item.variantIndex)
+                              removeFromCart(item.menuItemId, item.variantIndex)
                             }
                             className="text-red-600 hover:text-red-800 p-2"
                             title="Remove item"

@@ -95,9 +95,10 @@ const AuthenticatedMenuPage = () => {
   });
 
   const getItemQuantityInCart = (itemId: string, variantIndex?: number) => {
-    const cartItemId =
-      itemId + (variantIndex !== undefined ? `-variant-${variantIndex}` : "");
-    const cartItem = state.items.find((item) => item.id === cartItemId);
+    const cartItem = state.items.find(
+      (item) =>
+        item.menuItemId === itemId && item.variantIndex === variantIndex,
+    );
     return cartItem ? cartItem.quantity : 0;
   };
 
@@ -118,7 +119,7 @@ const AuthenticatedMenuPage = () => {
       id:
         item._id +
         (variantIndex !== undefined ? `-variant-${variantIndex}` : ""),
-      menuItem: item._id,
+      menuItemId: item._id,
       name: item.name + (variantName ? ` (${variantName})` : ""),
       price: price,
       quantity: 1,
@@ -132,12 +133,10 @@ const AuthenticatedMenuPage = () => {
     newQuantity: number,
     variantIndex?: number,
   ) => {
-    const cartItemId =
-      itemId + (variantIndex !== undefined ? `-variant-${variantIndex}` : "");
     if (newQuantity === 0) {
-      removeFromCart(cartItemId, variantIndex);
+      removeFromCart(itemId, variantIndex);
     } else {
-      updateQuantity(cartItemId, variantIndex, newQuantity);
+      updateQuantity(itemId, variantIndex, newQuantity);
     }
   };
 

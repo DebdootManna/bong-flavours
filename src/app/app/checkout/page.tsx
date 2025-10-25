@@ -33,7 +33,7 @@ const CheckoutPage = () => {
     specialInstructions: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [profileLoadSuccess, setProfileLoadSuccess] = useState(false);
@@ -166,14 +166,35 @@ const CheckoutPage = () => {
       }
 
       const orderData = {
-        items: cartState.items,
-        deliveryInfo,
+        items: cartState.items.map((item) => ({
+          menuItemId: item.menuItemId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          variant: item.variantName,
+          specialInstructions: item.specialInstructions,
+        })),
+        customerInfo: {
+          name: deliveryInfo.fullName,
+          email: user?.email || "",
+          phone: deliveryInfo.phone,
+          address: deliveryInfo.address,
+        },
+        deliveryInfo: {
+          address: deliveryInfo.address,
+          phone: deliveryInfo.phone,
+          deliveryNotes: deliveryInfo.specialInstructions,
+        },
         paymentMethod,
-        subtotal,
-        tax,
-        deliveryFee,
-        total,
+        notes: deliveryInfo.specialInstructions,
       };
+
+      // Debug logging
+      console.log("🛒 Cart items:", cartState.items);
+      console.log("👤 User info:", user);
+      console.log("📦 Order data being sent:", orderData);
+      console.log("🔑 Auth token exists:", !!token);
+      console.log("📋 Headers:", headers);
 
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -181,11 +202,32 @@ const CheckoutPage = () => {
         body: JSON.stringify(orderData),
       });
 
+      console.log("📊 Response status:", response.status);
+      console.log(
+        "📊 Response headers:",
+        Object.fromEntries(response.headers.entries()),
+      );
+
       if (!response.ok) {
-        throw new Error("Failed to place order");
+        const errorData = await response.text();
+        console.error("❌ Raw API Error Response:", errorData);
+
+        let parsedError;
+        try {
+          parsedError = JSON.parse(errorData);
+        } catch {
+          parsedError = { message: errorData };
+        }
+
+        console.error("❌ Parsed API Error:", parsedError);
+        throw new Error(
+          parsedError.message ||
+            `Failed to place order: ${response.status} ${response.statusText}`,
+        );
       }
 
       const result = await response.json();
+      console.log("✅ Success response:", result);
 
       const invoiceUrl = `/api/invoices/${result.order._id}`;
       window.open(invoiceUrl, "_blank");
@@ -193,8 +235,12 @@ const CheckoutPage = () => {
       clearCart();
       router.push(`/app/order-success?orderId=${result.order._id}`);
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Failed to place order. Please try again.");
+      console.error("💥 Error placing order:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to place order. Please try again.";
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -598,10 +644,10 @@ const CheckoutPage = () => {
                       <input
                         type="radio"
                         name="paymentMethod"
-                        value="cash"
-                        checked={paymentMethod === "cash"}
+                        value="cod"
+                        checked={paymentMethod === "cod"}
                         onChange={(e) =>
-                          setPaymentMethod(e.target.value as "cash" | "online")
+                          setPaymentMethod(e.target.value as "cod" | "online")
                         }
                         className="mr-3 h-4 w-4 text-[#6F1D1B]"
                       />
