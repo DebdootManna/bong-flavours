@@ -163,7 +163,7 @@ export default function GalleryPage() {
             />
             <div className="flex flex-col gap-1">
               <p className="text-white text-base">Phone number</p>
-              <p className="text-white text-base">+34 911 72 07 45</p>
+              <p className="text-white text-base">+91 82380 18577</p>
             </div>
           </div>
 

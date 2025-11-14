@@ -424,7 +424,7 @@ export default function MenuPage() {
               />
               <div className="text-white font-instrument-sans">
                 <p className="text-base">Phone number</p>
-                <p className="text-base">+34 911 72 07 45</p>
+                <p className="text-base">+91 82380 18577</p>
               </div>
             </div>
 
@@ -447,7 +447,7 @@ export default function MenuPage() {
           <div className="border-t border-white/20 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-white text-sm font-instrument-sans">
-                © 2024 Bong Flavours. All rights reserved.
+                © 2025 Bong Flavours. All rights reserved.
               </p>
 
               <div className="flex items-center gap-3">

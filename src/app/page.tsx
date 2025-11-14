@@ -293,14 +293,13 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 max-w-7xl mx-auto">
           <p className="text-[#D22020] text-base font-bold tracking-wider uppercase font-poppins mb-4">
-            discount
+            A brief...
           </p>
           <h2 className="text-white text-4xl md:text-5xl font-bold tracking-wider font-poppins mb-4">
-            Upcoming Events
+            Taste Bengal,<br />Savor Vadodara
           </h2>
           <p className="text-white text-lg font-poppins max-w-2xl">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-            vulputate libero et velit interdum, ac aliquet odio mattis.
+            Bong Flavours is a vibrant culinary destination offering authentic Bengali, Chinese, and North Indian delicacies, renowned for its signature rolls, biryanis, and traditional sweets like Nolen Gur Rosogolla, delivering a rich taste experience that brings the true essence of Bengal to your plate.
           </p>
         </div>
       </section>
@@ -317,7 +316,7 @@ export default function Home() {
               />
               <div className="text-white font-instrument-sans">
                 <p className="text-base">Phone number</p>
-                <p className="text-base">+34 911 72 07 45</p>
+                <p className="text-base">+91 82380 18577</p>
               </div>
             </div>
 
@@ -340,7 +339,7 @@ export default function Home() {
           <div className="border-t border-white/20 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-white text-sm font-instrument-sans">
-                © 2024 Bong Flavours. All rights reserved.
+                © 2025 Bong Flavours. All rights reserved.
               </p>
 
               <div className="flex items-center gap-3">
