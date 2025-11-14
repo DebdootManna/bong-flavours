@@ -75,7 +75,7 @@ export default function MenuPage() {
         {
           name: "KOLKATA STYLE EGG DUM BIRYANI",
           description:
-            "https://i.pinimg.com/1200x/92/48/d2/9248d2de57951839856b5166785d8453.jpg",
+            "Aromatic Kolkata biryani with soft-boiled eggs and fragrant, saffron-kissed rice",
           price: "₹250",
           image:
             "https://api.builder.io/api/v1/image/assets/TEMP/efcf97bc058b9ec0abb1c6ab3a3ff69aac8bef32?width=150",
