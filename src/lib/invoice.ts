@@ -309,8 +309,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
       name: "System Chrome (Standard)",
       config: {
         executablePath: systemChrome,
-        headless: "new" as const,
-        timeout: 30000,
+                  headless: true,        timeout: 30000,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -345,8 +344,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
     configs.push({
       name: "Bundled Chrome (if available)",
       config: {
-        headless: "new" as const,
-        timeout: 25000,
+                  headless: true,        timeout: 25000,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",

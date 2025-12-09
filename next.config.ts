@@ -1,16 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    // ⚠️ Dangerously allow production builds to successfully complete even if
-    // your project has TypeScript errors.
-    ignoreBuildErrors: true,
+  serverExternalPackages: ["mongoose", "puppeteer"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "",
+        pathname: "**",
+      },
+    ],
+    formats: ["image/webp", "image/avif"],
   },
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
+  env: {
+    CUSTOM_KEY: "bong-flavours",
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
